@@ -9,11 +9,16 @@
 </head>
 <body>
 <h2>Growth Percentile Calculator</h2>
-<label for="gender">性別:</label>
-<select id="gender">
-<option value="boy">男生</option>
-<option value="girl">女生</option>
-</select><br/><br/>
+<label>性別: </label>
+<span style="margin-left: 10px;">
+    <input type="radio" id="boy" name="gender" value="boy" checked>
+    <label for="boy">男生</label>
+</span>
+<span style="margin-left: 10px;">
+    <input type="radio" id="girl" name="gender" value="girl">
+    <label for="girl">女生</label>
+</span>
+<br/><br/>
 <label for="age">年齡: </label><input id="birthdate" onchange="
 if (!isNaN(this.value) &amp;&amp; this.value.trim() !== &quot;&quot;) {
     document.getElementById('age').value = this.value;

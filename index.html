@@ -11,10 +11,10 @@
 <h2>Growth Percentile Calculator</h2>
 <label for="gender">性別:</label>
 <select id="gender">
-<option value="boy">Boy</option>
-<option value="girl">Girl</option>
+<option value="boy">男生</option>
+<option value="girl">女生</option>
 </select><br/><br/>
-<label for="age">年齡:</label><input id="birthdate" onchange="
+<label for="age">年齡: </label><input id="birthdate" onchange="
 if (!isNaN(this.value) &amp;&amp; this.value.trim() !== &quot;&quot;) {
     document.getElementById('age').value = this.value;
     document.getElementById('ageDisplay').textContent = '';

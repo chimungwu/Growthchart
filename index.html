@@ -14,14 +14,14 @@
 <option value="boy">Boy</option>
 <option value="girl">Girl</option>
 </select><br/><br/>
-<label for="age">Age (in years or Birthdate):</label><input id="birthdate" onchange="
+<label for="age">Age (Age or Birthdate):</label><input id="birthdate" onchange="
 if (!isNaN(this.value) &amp;&amp; this.value.trim() !== &quot;&quot;) {
     document.getElementById('age').value = this.value;
     document.getElementById('ageDisplay').textContent = '';
 } else {
     calculateAge();
 }
-" placeholder="Type year or YYYY/MM/DD="text"/><input id="age" max="18.5" min="0" step="0.5" type="hidden"/> <span id="ageDisplay"></span><br/><br/>
+" placeholder="Type YYYY/MM/DD or Age="text"/><input id="age" max="18.5" min="0" step="0.5" type="hidden"/> <span id="ageDisplay"></span><br/><br/>
 <label for="height">Height (in cm):</label>
 <input id="height" step="0.1" type="number"/><br/><br/>
 <label for="weight">Weight (in kg):</label>

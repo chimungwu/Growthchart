@@ -74,7 +74,7 @@ function findBoundingPercentiles(value, ageIndex, dataset) {
 }
 
 function calculatePercentile() {
-    let gender = document.getElementById("gender").value;
+    let gender = document.querySelector('input[name="gender"]:checked').value;
     let age = parseFloat(document.getElementById("age").value);
     let height = parseFloat(document.getElementById("height").value);
     let weight = parseFloat(document.getElementById("weight").value);

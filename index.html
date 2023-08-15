@@ -9,12 +9,6 @@
 </head>
 <body>
 <h2>台灣兒童生長百分比計算器</h2>
-<p style='margin-top:20px; font-size:14px; color: blue;'>
-    說明：                                      
-    1. 資料來源為依據陳偉德醫師及張美惠醫師2010年發表之研究成果制定。<br>
-    2. 估算方式為使用兩個接近的百分比，利用內插法計算而成。
-    版本：2023/08/15
-</p>
 <label>性別: </label>
 <span style="margin-left: 10px;">
     <input type="radio" id="boy" name="gender" value="boy" checked>
@@ -123,7 +117,7 @@ function calculatePercentile() {
 </script>
 <script>
 function calculateInheritedHeight() {
-    const gender = document.getElementById('gender').value;
+    const gender = document.querySelector('input[name="gender"]:checked').value;
     const fatherHeight = parseFloat(document.getElementById('fatherHeight').value);
     const motherHeight = parseFloat(document.getElementById('motherHeight').value);
     let inheritedHeight = 0;
@@ -172,5 +166,11 @@ document.getElementById('ageDisplay').textContent = years + ' 歲 ' + months + '
 
 }
 </script>
+<p style='margin-top:20px; font-size:14px; color: blue;'>
+  說明： <br>                                     
+    1. 資料來源為依據陳偉德醫師及張美惠醫師2010年發表之研究成果制定。<br>
+    2. 估算方式為使用兩個接近的百分比，利用內插法計算而成。<br>
+    版本：2023/08/15
+</p>
 </body>
 </html>

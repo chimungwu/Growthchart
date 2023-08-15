@@ -9,25 +9,25 @@
 </head>
 <body>
 <h2>Growth Percentile Calculator</h2>
-<label for="gender">Gender:</label>
+<label for="gender">性別:</label>
 <select id="gender">
 <option value="boy">Boy</option>
 <option value="girl">Girl</option>
 </select><br/><br/>
-<label for="age">Age (Age or Birthdate):</label><input id="birthdate" onchange="
+<label for="age">年齡:</label><input id="birthdate" onchange="
 if (!isNaN(this.value) &amp;&amp; this.value.trim() !== &quot;&quot;) {
     document.getElementById('age').value = this.value;
     document.getElementById('ageDisplay').textContent = '';
 } else {
     calculateAge();
 }
-" placeholder="Type YYYY/MM/DD or Age="text"/><input id="age" max="18.5" min="0" step="0.5" type="hidden"/> <span id="ageDisplay"></span><br/><br/>
-<label for="height">Height (in cm):</label>
+" placeholder="輸入YYYY/MM/DD 或 年齡="text"/><input id="age" max="18.5" min="0" step="0.5" type="hidden"/> <span id="ageDisplay"></span><br/><br/>
+<label for="height">身高 (公分):</label>
 <input id="height" step="0.1" type="number"/><br/><br/>
-<label for="weight">Weight (in kg):</label>
+<label for="weight">體重 (公斤):</label>
 <input id="weight" step="0.1" type="number"/><br/><br/>
-<label for="fatherHeight">Father's Height (in cm):</label><input id="fatherHeight" step="0.1" type="number"/><br/><br/>
-<label for="motherHeight">Mother's Height (in cm):</label><input id="motherHeight" step="0.1" type="number"/><br/><br/>
+<label for="fatherHeight">爸爸身高 (公分):</label><input id="fatherHeight" step="0.1" type="number"/><br/><br/>
+<label for="motherHeight">媽媽身高 (公分):</label><input id="motherHeight" step="0.1" type="number"/><br/><br/>
 <button onclick="calculateInheritedHeight()">Calculate Inherited Height</button>
 <button onclick="calculatePercentile()">Calculate Percentile</button>
 <p id="result"></p><p id="percentileResult"></p><p id="inheritedHeightResult"></p>
@@ -78,7 +78,7 @@ function calculatePercentile() {
     let weightData = gender === "boy" ? boyWeightData : girlWeightData;
 
     if (age < 0 || age > 18.5) {
-        document.getElementById("result").innerText = "Age is out of range.";
+        document.getElementById("result").innerText = "輸入年齡範圍為0-18歲";
         return;
     }
 
@@ -104,10 +104,10 @@ function calculatePercentile() {
         parseFloat(weightBoundingPercentiles[1])
     );
 
-    let heightResult = heightPercentile > 97 ? "above the data range" : (heightPercentile < 3 ? "below the data range" : `around the ` + heightPercentile.toFixed(2) + ` percentile`);
-    let weightResult = weightPercentile > 97 ? "above the data range" : (weightPercentile < 3 ? "below the data range" : `around the ` + weightPercentile.toFixed(2) + ` percentile`);
+    let heightResult = heightPercentile > 97 ? "超過百分之97" : (heightPercentile < 3 ? "低於百分之3" : `大約是 ` + heightPercentile.toFixed(2) + ` 百分比`);
+    let weightResult = weightPercentile > 97 ? "超過百分之97" : (weightPercentile < 3 ? "低於百分之3" : `大約是 ` + weightPercentile.toFixed(2) + ` 百分比`);
 
-    document.getElementById("result").innerText = `Height is ` + heightResult + `, and weight is ` + weightResult + `.`;
+    document.getElementById("result").innerText = `身高 ` + heightResult + `, 體重 ` + weightResult + `.`;
 }
 </script>
 <script>
@@ -123,7 +123,7 @@ function calculateInheritedHeight() {
         inheritedHeight = (fatherHeight + motherHeight - 13) / 2;
     }
 
-    document.getElementById('percentileResult').innerText = 'Estimated Inherited Height: ' + inheritedHeight.toFixed(2) + ' cm';
+    document.getElementById('percentileResult').innerText = '預估遺傳身高為: ' + inheritedHeight.toFixed(2) + ' cm';
 }
 </script><script>
 function calculateAge() {
@@ -157,7 +157,7 @@ let remainingMonths = (ageInYears - years) * 12;
 const months = Math.floor(remainingMonths);
 let daysInMonths = [31, (years % 4 === 0 && (years % 100 !== 0 || years % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 let days = Math.floor((remainingMonths - months) * daysInMonths[months]);
-document.getElementById('ageDisplay').textContent = years + ' years ' + months + ' months ' + days + ' days';
+document.getElementById('ageDisplay').textContent = years + ' 歲 ' + months + ' 個月 ' + days + ' 天';
 
 }
 </script>

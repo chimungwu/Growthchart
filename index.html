@@ -109,8 +109,8 @@ function calculatePercentile() {
         parseFloat(weightBoundingPercentiles[1])
     );
 
-    let heightResult = heightPercentile > 97 ? "超過百分之97" : (heightPercentile < 3 ? "低於百分之3" : `大約是 ` + heightPercentile.toFixed(2) + ` 百分比`);
-    let weightResult = weightPercentile > 97 ? "超過百分之97" : (weightPercentile < 3 ? "低於百分之3" : `大約是 ` + weightPercentile.toFixed(2) + ` 百分比`);
+    let heightResult = heightPercentile > 97 ? "超過百分之97" : (heightPercentile < 3 ? "低於百分之3" : `大約是在 ` + heightPercentile.toFixed(2) + ` 百分比`);
+    let weightResult = weightPercentile > 97 ? "超過百分之97" : (weightPercentile < 3 ? "低於百分之3" : `大約是在 ` + weightPercentile.toFixed(2) + ` 百分比`);
 
     document.getElementById("result").innerText = `身高 ` + heightResult + `, 體重 ` + weightResult + `.`;
 }

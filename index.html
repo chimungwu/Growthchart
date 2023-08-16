@@ -132,7 +132,7 @@ function calculateInheritedHeight() {
         inheritedHeight = (fatherHeight + motherHeight - 13) / 2;
     }
 
-    document.getElementById('percentileResult').innerText = '預估遺傳身高為: ' + inheritedHeight.toFixed(2) + ' cm';
+    document.getElementById('percentileResult').innerText = '預估遺傳身高為： ' + inheritedHeight.toFixed(2) + ' 公分';
 }
 </script><script>
 function calculateAge() {
@@ -166,7 +166,7 @@ let remainingMonths = (ageInYears - years) * 12;
 const months = Math.floor(remainingMonths);
 let daysInMonths = [31, (years % 4 === 0 && (years % 100 !== 0 || years % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 let days = Math.floor((remainingMonths - months) * daysInMonths[months]);
-document.getElementById('ageDisplay').textContent = years + ' 歲 ' + months + ' 個月又 ' + days + ' 天';
+document.getElementById('ageDisplay').textContent = '實歲為 ' + years + ' 歲 ' + months + ' 個月又 ' + days + ' 天';
 
 }
 </script>

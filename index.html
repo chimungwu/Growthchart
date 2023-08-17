@@ -36,7 +36,7 @@ if (!isNaN(this.value) &amp;&amp; this.value.trim() !== &quot;&quot;) {
 <input id="weight" step="0.1" type="number"><br/><br/>
 <label for="fatherHeight">爸爸身高 (公分): </label><input id="fatherHeight" step="0.1" type="number"/><br/><br/>
 <label for="motherHeight">媽媽身高 (公分): </label><input id="motherHeight" step="0.1" type="number"/><br/><br/>
-<button onclick="displayResults()">估算生長百分比</button>  
+<button onclick="displayResults()">估算生長百分比</button>    
 <button onclick="calculateInheritedHeight()">估算遺傳身高</button>
 <p id="result"></p><p id="percentileResult"></p><p id="inheritedHeightResult"></p>
 <script>
@@ -86,8 +86,8 @@ function calculateAge() {
     
     // Check if the age is over 18
     if (ageInYears > 18) {
-        document.getElementById('ageDisplay').textContent = "請輸入0-18歲";
-        document.getElementById('age').value = "";  // Clear the age input field
+        document.getElementById('ageDisplay').textContent = "請輸入0-18之間的歲數";
+    //document.getElementById('age').value = "";  // Clear the age input field
         return;
     }
 

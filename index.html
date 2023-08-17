@@ -103,8 +103,7 @@ function calculateAge() {
     document.getElementById('ageDisplay').textContent = '實歲為 ' + years + ' 歲 ' + months + ' 個月又 ' + days + ' 天';
 
 }
-</script>
-</input></input><div id="result"></div><script>
+
 function interpolate_value(value, x1, x2, y1, y2) {
     return y1 + ((value - x1) * (y2 - y1)) / (x2 - x1);
 }
@@ -214,10 +213,11 @@ function displayResults() {
 <p style='margin-top:20px; font-size:14px; color: blue;'>
   說明： <br>                                     
     1. 原始數據引用陳偉德醫師及張美惠醫師在2010年發表之論文。<br>
-    Chen W, Chang MH. New growth charts for Taiwanese children and adolescents based on World Health Organization standards and health-related physical fitness. Pediatr Neonatol. 2010 Apr;51(2):69-79.<br>
+        Chen W, Chang MH. New growth charts for Taiwanese children and adolescents based on World Health Organization standards and health-related physical fitness. Pediatr Neonatol. 2010 Apr;51(2):69-79.<br>
     2. 生長百分比估算方式為使用兩個接近的百分比，利用內插法計算而成。<br>
     3. 遺傳身高估算公式為：(爸爸身高➕媽媽身高）➗2所得到的數值，男生➕6.5，女生➖6.5。<br>
     4. 生長百分比及遺傳身高估算結果僅供參考，如果對於計算出來的數據有任何問題務必請教自己的兒科醫師。<br>
+    5. 程式維護：臻品中醫診所 吳啓銘醫師
 </p>
 </body>
 </html>

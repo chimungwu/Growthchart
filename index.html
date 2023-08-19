@@ -30,7 +30,7 @@
     cursor: pointer;  /* Make it look clickable */
 ">
     <p id="AgeResult" style="margin: 0; text-align: center;"></p>
-    <p id="result" style="margin: 0; text-align: center; color: White;">結 果 顯 示 區</p>
+    <p id="result" style="margin: 0; text-align: center; color: #EC8C32;">結 果 顯 示 區</p>
     <p id="InheritedResult" style="margin: 0; text-align: center;"></p>
 </div>
 <br>
@@ -49,7 +49,7 @@
     if (!isNaN(this.value) &amp;&amp; this.value.trim() !== '') {
         let numericValue = parseFloat(this.value);
         if (numericValue < 0 || numericValue > 18) {
-            document.getElementById('AgeResult').textContent = '請輸入0-18之間的歲數';
+            document.getElementById('AgeResult').textContent = '年齡超過18歲';
             return;
         }
         document.getElementById('age').value = this.value;

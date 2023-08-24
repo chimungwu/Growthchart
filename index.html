@@ -90,6 +90,33 @@ var _0x12cf65=_0x6947;function _0x2383(){var _0x77c677=['|||||||||||document||||
             navigator.serviceWorker.register('/Growthchart/service-worker.js');
         });
     }
+
+//點擊加入主畫面
+    let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // 阻止Chrome 67及更早版本的自動顯示提示
+  e.preventDefault();
+  // 保存事件，以便稍後使用
+  deferredPrompt = e;
+});
+
+document.getElementById('resultsContainer').addEventListener('click', () => {
+  if (deferredPrompt) {
+    // 顯示提示
+    deferredPrompt.prompt();
+    // 等待用戶的響應
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('用戶接受了提示');
+        } else {
+          console.log('用戶拒絕了提示');
+        }
+        deferredPrompt = null;
+    });
+  }
+});
+
 </script>
 
 </body>

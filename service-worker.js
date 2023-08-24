@@ -2,9 +2,9 @@
 self.addEventListener('install', (event) => {
     // Cached files
     const cachedFiles = [
-        './',
-        './favicon.ico',
-        './apple-touch-icon.png',
+        '/Growthchart/',
+        '/Growthchart/favicon.ico',
+        '/Growthchart/apple-touch-icon.png',
     ];
     
     event.waitUntil(

@@ -31,10 +31,12 @@
     text-align: left;
     cursor: pointer;  /* Make it look clickable */
 ">
+    <p style="margin: 0; text-align: center; color: navy; font-size: 1.3em;">兒童生長曲線小幫手</p>
     <p id="AgeResult" style="margin: 0; text-align: center;"></p>
-    <p id="result" style="margin: 0; text-align: center; color: navy;">台灣兒童生長評估</p>
+    <p id="result" style="margin: 0; text-align: center;"></p>
     <p id="InheritedResult" style="margin: 0; text-align: center;"></p>
 </div>
+<br>
 <br>
 <label>性別: </label>
 <span style="margin-left: 10px;">
@@ -68,11 +70,9 @@
 <input class="centered-text-input" id="motherHeight" step="0.1" type="number" oninput="executeAllFunctions()"/><br/><br/>
 <div id="addToHomeScreen" style="display: none;">
     <p>想要更方便地訪問這個網站嗎？</p>
-    <p>1. 點擊下方的分享按鈕 <img src="path_to_share_icon_image.png" alt="分享圖標" style="width: 32px; height: 32px;"> 。</p>
+    <p>1. 點擊下方的分享按鈕 <img src="path_to_share_icon_image.png" alt="分享圖標" style="width: 30px; height: 30px;"> 。</p>
     <p>2. 然後從彈出的選單中選擇「加入主畫面」。</p>
     <button onclick="closeAddToHomeScreen()">了解了</button>
-</div>
-
 </div>
 
 <script>

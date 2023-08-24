@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="./favicon.ico" rel="Shortcut Icon" type="image/x-icon"/>
-    <link href="./favicon.ico" rel="Bookmark" type="image/x-icon"/>
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel='manifest' href='manifest.json'>
+    <link href="/Growthchart/favicon.ico" rel="Shortcut Icon" type="image/x-icon"/>
+    <link href="/Growthchart/favicon.ico" rel="Bookmark" type="image/x-icon"/>
+    <link rel="apple-touch-icon" href="/Growthchart/apple-touch-icon.png">
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -82,5 +83,14 @@ var _0x12cf65=_0x6947;function _0x2383(){var _0x77c677=['|||||||||||document||||
     4. 生長百分比及遺傳身高估算結果僅供參考，如果有任何問題務必請教自己的兒科醫師。<br>
     &nbsp;&nbsp;&nbsp;程式維護：臻品中醫診所 吳啓銘醫師&nbsp;&nbsp;&nbsp;程式版本：2023/08/23
 </p>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/Growthchart/service-worker.js');
+        });
+    }
+</script>
+
 </body>
 </html>

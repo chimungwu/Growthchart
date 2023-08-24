@@ -1,6 +1,6 @@
 {
-    "short_name": "\u6210\u9577\u767e\u5206\u6bd4\u8a08\u7b97\u5668",
-    "name": "\u53f0\u7063\u5152\u7ae5\u751f\u9577\u767e\u5206\u6bd4\u4f30\u7b97\u5668",
+    "short_name": "生長曲線小幫手",
+    "name": "台灣孩童生長曲線估算器",
     "icons": [
         {
             "src": "/Growthchart/favicon.ico",

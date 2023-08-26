@@ -69,12 +69,13 @@ body {
     background-color: #f9f9f9; /* 更浅的模态窗口背景颜色 */
     padding: 20px;
     border: 1px solid #ddd; /* 更浅的边框颜色 */
-    width: 80%;
+    width: 100%; /* 将宽度设置为100% */
     max-width: 90vw;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 提高阴影的强度 */
     border-radius: 10px; /* 添加圆角 */
+    box-sizing: border-box; /* 让边界框宽度包含在内部 */
 }
 
 .modal-header {

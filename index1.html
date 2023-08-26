@@ -45,23 +45,27 @@ body {
             transform: scale(1.1);
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 30%;
-            top: 30%;
-            transform: translate(-50%, -50%);
-        }
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 30%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.4); /* 移動到這裡 */
+    width: 100%; /* 覆蓋整個視窗 */
+    height: 100%; /* 覆蓋整個視窗 */
+}
 
-        .modal-content {
-            position: relative;
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
+.modal-content {
+    position: relative;
+    background-color: #fefefe; /* 去掉透明度 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    margin: auto; /* 加上這行，使其水平和垂直居中 */
+}
+
 
         .modal-header {
             padding: 10px;

@@ -37,6 +37,7 @@ body {
 
 
 
+/* Icon Styles */
 .icon-circle img {
     border-radius: 50%;
     transition: transform 0.3s ease;
@@ -45,8 +46,10 @@ body {
 
 .icon-circle:hover img {
     transform: scale(1.1);
+    filter: brightness(1.2); /* 提高亮度 */
 }
 
+/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -55,7 +58,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.6); /* 更深的背景遮罩颜色 */
 }
 
 .modal-content {
@@ -63,18 +66,19 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fefefe;
+    background-color: #f9f9f9; /* 更浅的模态窗口背景颜色 */
     padding: 20px;
-    border: 1px solid #888;
+    border: 1px solid #ddd; /* 更浅的边框颜色 */
     width: 80%;
-    max-width: 90vw; /* Avoid the modal going beyond the viewport width */
-    max-height: 90vh; /* Avoid the modal going beyond the viewport height */
-    overflow-y: auto; /* Add scroll if content is too long */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 提高阴影的强度 */
+    border-radius: 10px; /* 添加圆角 */
 }
 
 .modal-header {
-    padding: 10px;
+    padding: 15px; /* 增加上下间距 */
     cursor: move;
     background-color: #f1f1f1;
     display: flex;
@@ -84,10 +88,11 @@ body {
 
 .modal-header h2 {
     margin: 0;
-    text-align: center; /* 设置标题居中对齐 */
-    flex-grow: 1; /* 让标题占据剩余的空间 */
+    text-align: center;
+    flex-grow: 1;
+    color: #555; /* 更深的标题颜色 */
 }
-    
+
 .close {
     color: #aaa;
     font-size: 28px;
@@ -96,17 +101,16 @@ body {
 }
 
 .close:hover {
-    color: black;
+    color: #333; /* 更深的关闭按钮颜色 */
     text-decoration: none;
 }
 
 /* Add padding for better readability */
 p {
-    padding: 5px 0;
+    padding: 8px 0; /* 增加上下间距 */
 }
-
-    
-    </style>
+ 
+</style>
 <body>
 <div id="resultsContainer" >
     <p style="margin: 0; text-align: center; color: navy; font-size: 1.3em;">兒童生長曲線小幫手</p>
@@ -160,7 +164,7 @@ p {
             <span class="close" onclick="closeModal()">&times;</span>
             <h2 id="modalTitle" style="text-align: center; margin: 0; padding: 10px;">模態窗口頭部</h2>
         </div>
-        <iframe id="modal-iframe" style="width: 80%; height: 400px;"></iframe>
+        <iframe id="modal-iframe" style="width: 100%; height: 400px;"></iframe>
     </div>
 </div>
 

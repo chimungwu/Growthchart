@@ -15,49 +15,38 @@ body {
     font-size: 1.0em;
     text-align: left;
 }
-
 #resultsContainer {
     font-size: 1.2em;
     font-family: 'Arial', sans-serif;
-    color: #333;
+    color: #333;  /* 更深的字體顏色 */
     font-weight: bold;
-    background-color: #c8daff;
+    background-color: #c8daff;  /* 較淺的背景顏色 */
     padding: 10px;
-    margin: 0;
-    border: 2px solid #6699cc;
-    border-radius: 5px;
+    margin: 0;  /* 這裡將邊距設為0 */
+    border: 2px solid #6699cc;  /* 協調的邊框顏色 */
+    border-radius: 5px;  /* 圓角 */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     max-width: 320px;
     text-align: left;
-    cursor: pointer;
+    cursor: pointer;  /* Make it look clickable */
 }
 
 #resultsContainer p {
     padding: 0;
 }
 
+
+
 /* Icon Styles */
-.icon-circle {
-    display: inline-block;
-    margin-right: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.icon-circle:hover {
-    transform: scale(1.1);
-}
-
 .icon-circle img {
     border-radius: 50%;
-    display: block;
     transition: transform 0.3s ease;
     cursor: pointer;
 }
 
 .icon-circle:hover img {
     transform: scale(1.1);
-    filter: brightness(1.2);
+    filter: brightness(1.2); /* 提高亮度 */
 }
 
 /* Modal Styles */
@@ -69,48 +58,50 @@ body {
     left: 0;
     width: 90%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6); /* 更深的背景遮罩颜色 */
+    overflow: auto; /* 添加 overflow 样式以实现滚动 */
 }
 
 .modal-content {
-    position: fixed;
+    position: fixed; /* 将定位方式改为 fixed */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* 更浅的模态窗口背景颜色 */
     padding: 20px;
-    width: 80%;
-    max-width: 80%;
+    width: 80%; /* 将宽度设置为100% */
+    max-width: 80%; /* 考虑内边距的影响 */
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    box-sizing: content-box;
-    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 提高阴影的强度 */
+    border-radius: 10px; /* 添加圆角 */
+    box-sizing: content-box; /* 让边界框宽度包含在内部 */
+    overflow: hidden; /* 添加 overflow 样式 */
+    border-left: none; /* 移除左侧边框线 */
 }
 
 .modal-header {
-    padding: 10px;
+    padding: 10px; /* 增加上下间距 */
     cursor: move;
     background-color: #f1f1f1;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0; /* 顶部圆角 */
 }
 
 .modal-header h2 {
     margin: 0;
     text-align: center;
     flex-grow: 1;
-    color: #555;
+    color: #555; /* 更深的标题颜色 */
 }
 
 .modal-content .modal-header + * {
     border-top: none;
 }
 
+/* Add a button style for better visibility */
 .modal-content button {
     background-color: #4CAF50;
     color: white;
@@ -125,6 +116,7 @@ body {
     background-color: #45a049;
 }
 
+
 .close {
     color: #aaa;
     font-size: 28px;
@@ -133,14 +125,14 @@ body {
 }
 
 .close:hover {
-    color: #333;
+    color: #333; /* 更深的关闭按钮颜色 */
     text-decoration: none;
 }
 
+/* Add padding for better readability */
 p {
-    padding: 8px 0;
+    padding: 8px 0; /* 增加上下间距 */
 }
-
  
 </style>
 <body>
@@ -182,27 +174,25 @@ p {
 
 <!-- Icon Links -->
 <div style="display: flex; justify-content: left; margin-top: 10px;">
-    <button onclick="showDescription('description1.html');" title="第一個連結" class="icon-circle">
+    <div onclick="showDescription('description1.html');" style="margin-right: 10px;" title="第一個連結" class="icon-circle">
         <img src="ICON1.png" alt="ICON 1" width="50" height="50">
-    </button>
-    <button onclick="showDescription('description2.html');" title="第二個連結" class="icon-circle" style="margin-left: 10px;">
+    </div>
+    <div onclick="showDescription('description2.html');" title="第二個連結" class="icon-circle">
         <img src="ICON2.png" alt="ICON 2" width="50" height="50">
-    </button>
+    </div>
 </div>
 
 <!-- The Modal -->
 <div id="myModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <button class="close" onclick="closeModal()">&times;</button>
+            <span class="close" onclick="closeModal()">&times;</span>
             <h2 id="modalTitle">模態窗口頭部</h2>
         </div>
         <iframe id="modal-iframe" style="width: 100%; height: 400px;"></iframe>
         <button onclick="closeModal()">關閉</button>
     </div>
 </div>
-
-
 
 <hr>
     

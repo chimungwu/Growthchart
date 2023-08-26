@@ -61,12 +61,12 @@
 </style>
 
 <label for="age">生日 / 年齡: </label>
-<input class="centered-text-input" id="birthdate" placeholder="輸入YYYYMMDD 或 年齡" type="number" inputmode="numeric"/>
+<input class="centered-text-input" id="birthdate" placeholder="輸入 YYYYMMDD 或 年齡" type="number" inputmode="numeric"/>
 <input id="age" max="18.5" min="0" step="0.5" type="hidden"/>
 <span id="AgeResult"></span>
 <br/><br/>
 <label for="height">身高 (公分):</label>
-<input class="centered-text-input" id="height" step="0.1" type="text" inputmode="number" oninput="executeAllFunctions()"/><br/><br/>
+<input class="centered-text-input" id="height" step="0.1" type="text" inputmode="decimal" oninput="executeAllFunctions()"/><br/><br/>
 <label for="weight">體重 (公斤):</label>
 <input class="centered-text-input" id="weight" step="0.1" type="text" inputmode="decimal"  oninput="executeAllFunctions()"/><br/><br/>
 <label for="fatherHeight">爸爸的身高: </label>

@@ -74,12 +74,17 @@ body {
 }
 
 .modal-header {
-    padding: 10px;
+    padding: 5px;  /* 調整為所需的內邊距 */
     cursor: move;
     background-color: #f1f1f1;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.0em;  /* 調整字體大小 */
+    margin: 0;  /* 移除預設的邊距 */
 }
 
 .close {
@@ -99,6 +104,7 @@ p {
     padding: 5px 0;
 }
 
+    
     </style>
 <body>
 <div id="resultsContainer" >
@@ -153,11 +159,9 @@ p {
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>模態窗口頭部</h2>
         </div>
-        <iframe id="modal-iframe" style="width: 100%; height: 400px;"></iframe> <!-- 設定合適的寬度和高度 -->
+        <iframe id="modal-iframe" style="width: 80%; height: 400px;"></iframe> <!-- 設定合適的寬度和高度 -->
     </div>
 </div>
-
-
 
 <hr>
     

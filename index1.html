@@ -58,8 +58,8 @@ body {
     left: 0;
     width: 90%;
     height: 100%;
-    background-color: #FFBFBF; /* 更深的背景遮罩颜色 */
-    overflow: auto; /* 添加 overflow 样式以实现滚动 */
+    background-color: rgba(255, 183, 107, 0.7); /* 橘黄色的背景遮罩颜色 */
+    overflow: auto;
     border-left: none;
 }
 
@@ -69,7 +69,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     
-    background-color: #f7f7f7; /* 更中性的背景顏色 */
+    background-color: #FFE4B5; /* 淡橘黄色的背景颜色 */
     
     padding: 20px;
     width: 80%;
@@ -77,36 +77,32 @@ body {
     max-height: 90vh;
     overflow-y: auto;
     
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* 提高陰影的強度為0.3 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     
-    border: 1px solid #ddd; /* 添加細微的邊框 */
+    border: 1px solid #FFDAB9; /* 淡橘黄色的边框 */
     border-radius: 10px;
     
     box-sizing: content-box;
     overflow: hidden;
     
-    color: #333333; /* 深灰色的文字顏色 */
+    color: #704214; /* 深棕色的文字颜色 */
 }
 
 .modal-header {
-    padding: 10px; /* 增加上下间距 */
+    padding: 10px;
     cursor: move;
-    background-color: #F3FDE8;
+    background-color: #FFA07A; /* 淡橘红色的标题背景 */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 10px 10px 0 0; /* 顶部圆角 */
+    border-radius: 10px 10px 0 0;
 }
 
 .modal-header h2 {
     margin: 0;
     text-align: center;
     flex-grow: 1;
-    color: #555; /* 更深的标题颜色 */
-}
-
-.modal-content .modal-header + * {
-    border-top: none;
+    color: #FFFFFF; /* 白色的标题颜色，与背景形成对比 */
 }
 
 /* Add a button style for better visibility */

@@ -64,21 +64,28 @@ body {
 }
 
 .modal-content {
-    position: fixed; /* 将定位方式改为 fixed */
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #FFE5E5; /* 更浅的模态窗口背景颜色 */
+    
+    background-color: #f7f7f7; /* 更中性的背景顏色 */
+    
     padding: 20px;
-    width: 80%; /* 将宽度设置为100% */
-    max-width: 80%; /* 考虑内边距的影响 */
+    width: 80%;
+    max-width: 80%;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 提高阴影的强度 */
-    border-radius: 10px; /* 添加圆角 */
-    box-sizing: content-box; /* 让边界框宽度包含在内部 */
-    overflow: hidden; /* 添加 overflow 样式 */
-    border-left: none; /* 移除左侧边框线 */
+    
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* 提高陰影的強度為0.3 */
+    
+    border: 1px solid #ddd; /* 添加細微的邊框 */
+    border-radius: 10px;
+    
+    box-sizing: content-box;
+    overflow: hidden;
+    
+    color: #333333; /* 深灰色的文字顏色 */
 }
 
 .modal-header {

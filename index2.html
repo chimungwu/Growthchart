@@ -635,14 +635,24 @@ END:VCALENDAR
     `.trim();
 
     const blob = new Blob([icsContent], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'growth_chart_result.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        // For IE and Edge
+        window.navigator.msSaveOrOpenBlob(blob, 'growth_chart_result.ics');
+    } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'growth_chart_result.ics';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
 }
+
 
 function formatDate(date) {
     const year = date.getFullYear();

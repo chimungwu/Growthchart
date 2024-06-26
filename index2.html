@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel='manifest' href='./manifest.json'>
+    <link href="/Growthchart/favicon.ico" rel="Shortcut Icon" type="image/x-icon"/>
+    <link href="/Growthchart/favicon.ico" rel="Bookmark" type="image/x-icon"/>
+    <link rel="apple-touch-icon" href="/Growthchart/apple-touch-icon.png">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>台灣兒童生長曲線小幫手</title>
+    <style>
+        body {
+            background-color: #FFEFDB; /* 温暖的背景颜色 */
+        }
+    </style>
+</head>
+<body style="text-align: center; font-size: 1.1em;">
+<br>
+<div id="resultsContainer" style="
+    font-family: 'Arial', sans-serif;
+    color: #333;  /* 更深的字體顏色 */
+    font-size: 1.1em;
+    font-weight: bold;  
+    background-color: #c8daff;  /* 較淺的背景顏色 */
+    padding: 10px;
+    margin: 0 auto;  /* 將左右外邊距設為自動，使其水平置中 */
+    width: 90%; /* 使其寬度擴展至父元素的最大寬度 */
+    border: 2px solid #6699cc;  /* 協調的邊框顏色 */
+    border-radius: 5px;  /* 圓角 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 320px;
+    text-align: center;
+    cursor: pointer;  /* Make it look clickable */
+    ">
+    <p style="margin: 0; color: navy; font-size: 1.4em;">兒童生長曲線小幫手</p>
+    <p id="AgeResult" style="margin: 0;"></p>
+    <p id="result" style="margin: 0;"></p>
+    <p id="BMIResult" style="margin: 0;"></p>
+    <p id="InheritedResult" style="margin: 0;"></p>
+    <p id="currentDate" style="margin: 0;"></p>
+        <button id="copyButton">複製結果</button>
+        <button id="downloadICSButton">存到行事曆</button>
+</div>
+<textarea id="copyTextArea" style="position: absolute; left: -9999px;"></textarea>
+
+<br>
+<br>
+<label>&nbsp;性&nbsp;&nbsp;&nbsp;別: </label>
+<span style="margin-left: 10px;">
+<input checked="" id="boy" name="gender" type="radio" value="boy" onchange="handleGenderChange();"/>
+<label for="boy">男孩</label>
+</span>
+<span style="margin-left: 10px;">
+    <input id="girl" name="gender" type="radio" value="girl" onchange="handleGenderChange();"/>
+    <label for="girl">女孩</label>
+</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<button id="refreshBtn" onclick="refreshPage()" style="background-color: transparent; border: none; cursor: pointer;">
+    <img src="refresh.png" alt="Refresh" width="18" height="18" style="vertical-align: middle;">
+</button>
+    
+<br/><br/>
+
+<style>
+    .centered-text-input {
+        text-align: center;
+    }
+</style>
+
+<label for="age">生日 / 年齡: </label>
+<input class="centered-text-input" id="birthdate" placeholder="輸入YYYYMMDD 或 年齡" type="text"/>
+<input id="age" max="18.5" min="0" step="0.5" type="hidden"/>
+<span id="AgeResult"></span>
+<br/><br/>
+<label for="height">身高 (公分):</label>
+<input class="centered-text-input" id="height" step="0.1" type="number" oninput="executeAllFunctions()"/><br/><br/>
+<label for="weight">體重 (公斤):</label>
+<input class="centered-text-input" id="weight" step="0.1" type="number" oninput="executeAllFunctions()"/><br/><br/>
+<label for="fatherHeight">爸爸的身高: </label>
+<input class="centered-text-input" id="fatherHeight" step="0.1" type="number" oninput="executeAllFunctions()"/><br/><br/>
+<label for="motherHeight">媽媽的身高: </label>
+<input class="centered-text-input" id="motherHeight" step="0.1" type="number" oninput="executeAllFunctions()"/><br/><br/>
+<hr>
+    
+<div id="addToHomeScreen" style="display: none;">
+    <p>想要更方便地訪問這個網站嗎？</p>
+    <p>1. 請先以系統瀏覽器開啟，點擊下方的分享按鈕 <img src="path_to_share_icon_image.png" alt="分享圖標" style="width: 18px; height: 18px;"> 。</p>
+    <p>2. 然後從彈出的選單中選擇「加入主畫面」。</p>
+    <button onclick="closeAddToHomeScreen()">了解了</button>
+</div>
+
+<p style='text-align: left; margin-top:20px; color:Gray;'>
+  說明： <br>                                     
+    1. 原始數據引用陳偉德醫師及張美惠醫師在2010年發表之<a href="https://www.pediatr-neonatol.com/article/S1875-9572(10)60014-9/pdf?fbclid=IwAR1vwAZSpKAAx_p01jt_rU1jZoHUYnmrl901ashA59tqL6li1h8Fjs9q8hg" target="_blank">論文</a>。<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Chen W, Chang MH. New growth charts for Taiwanese children and adolescents based on World Health Organization standards and health-related physical fitness. Pediatr Neonatol. 2010 Apr;51(2):69-79.<br>
+        2. 兒童及青少年生長身體質量指數(BMI)建議值<a href="https://www.hpa.gov.tw/Pages/ashx/File.ashx?FilePath=~/File/Attach/9547/File_8986.pdf" target="_blank">下載</a>(衛福部 102 年 6 月 11 日公布)。<br>
+
+    3. 預估目標身高<a href="https://adc.bmj.com/content/archdischild/45/244/755.full.pdf" target="_blank">(Target Height)</a>公式為： 男孩 = 爸媽平均身高 + 6.5 ± 7.5公分 ; 女孩 = 爸媽平均身高 - 6.5 ± 6 公分. <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;J.M. Tanner, H. Goldstein, R.H. Whitehouse. Standards for children’s height at ages 2-9 years allowing for heights of parents. Arch Dis Child, 45 (1970), pp. 755-762.<br>    
+    4. 生長百分比及遺傳身高估算結果僅供參考，如果有任何問題務必請教自己的兒科醫師。<br>
+        <hr>
+<p style='text-align: left; '>
+程式維護：<a href="https://www.facebook.com/profile.php?id=61557246475372" target="_blank">仨寶爸中醫博士吳啓銘醫師</a><br>
+程式版本：2024/06/12
+</p>
+
+</body>
+</html>
+
+<script>
+
+        // 定義重新整理頁面的函數
+        function refreshPage() {
+            location.reload();
+        }
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/Growthchart/service-worker.js');
+        });
+    }
+
+//點擊加入主畫面
+    let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // 阻止Chrome 67及更早版本的自動顯示提示
+  e.preventDefault();
+  // 保存事件，以便稍後使用
+  deferredPrompt = e;
+});
+
+document.getElementById('resultsContainer').addEventListener('click', () => {
+  if (deferredPrompt) {
+    // 顯示提示
+    deferredPrompt.prompt();
+    // 等待用戶的響應
+    deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('用戶接受了提示');
+        } else {
+          console.log('用戶拒絕了提示');
+        }
+        deferredPrompt = null;
+    });
+  }
+});
+
+function displayAddToHomeScreenPrompt() {
+    // 這裡可以加入條件來判斷是否在 iPhone 設備上
+    if (isIphone() && !isAddedToHomescreen()) {
+        document.getElementById('addToHomeScreen').style.display = 'block';
+    }
+}
+
+function closeAddToHomeScreen() {
+    document.getElementById('addToHomeScreen').style.display = 'none';
+}
+
+function isIphone() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function isAddedToHomescreen() {
+    // 您可以使用一些方法來判斷網站是否已被加入主畫面
+    // 例如：通過檢查 navigator.standalone 屬性 (僅適用於較舊的 iOS 版本)
+    return window.navigator.standalone;
+}
+
+// 偵測頁面加載完成
+window.onload = function() {
+    displayAddToHomeScreenPrompt();
+}
+
+const boyWeightData = {"Age": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5], " 3rd": [2.5, 6.4, 7.8, 8.9, 9.8, 10.7, 11.4, 12.2, 12.9, 13.6, 14.3, 15.3, 16.3, 17.4, 18.4, 19.4, 20.3, 21.2, 22.1, 23.0, 24.0, 25.0, 26.3, 27.6, 29.3, 30.5, 32.8, 35.0, 38.0, 41.0, 43.0, 45.0, 46.8, 48.5, 49.3, 50.0, 50.3, 50.5], "15th": [2.9, 7.1, 8.6, 9.7, 10.8, 11.8, 12.7, 13.5, 14.3, 15.2, 16.0, 17.1, 18.2, 19.3, 20.4, 21.5, 22.7, 23.8, 24.8, 25.8, 26.9, 28.0, 29.6, 31.2, 33.1, 35.0, 38.0, 41.0, 44.0, 47.0, 49.0, 51.0, 52.0, 53.0, 54.0, 55.0, 55.0, 55.0], "25th": [3.0, 7.4, 9.0, 10.1, 11.3, 12.3, 13.2, 14.1, 15.0, 15.9, 16.7, 17.9, 19.0, 20.2, 21.3, 22.5, 23.8, 25.0, 26.0, 27.0, 28.4, 29.8, 31.4, 33.0, 35.2, 37.3, 40.7, 44.0, 46.8, 49.5, 51.3, 53.0, 54.1, 55.1, 56.1, 57.0, 57.5, 58.0], "50th": [3.3, 7.9, 9.6, 10.9, 12.2, 13.3, 14.3, 15.3, 16.3, 17.3, 18.3, 19.6, 20.9, 22.3, 23.6, 24.9, 26.3, 27.6, 28.8, 30.0, 31.5, 33.0, 35.3, 37.6, 40.3, 43.0, 46.5, 50.0, 52.5, 54.9, 56.5, 58.0, 59.0, 60.0, 61.0, 62.0, 62.5, 63.0], "75th": [3.7, 8.5, 10.4, 11.8, 13.1, 14.4, 15.6, 16.7, 17.8, 19.0, 20.1, 21.6, 23.2, 24.7, 26.3, 27.8, 29.6, 31.4, 32.7, 34.0, 36.0, 38.0, 40.8, 43.5, 46.5, 49.5, 53.0, 56.4, 58.7, 61.0, 62.5, 64.0, 65.0, 66.0, 66.6, 67.2, 67.6, 68.0], "85th": [3.9, 8.9, 10.8, 12.3, 13.7, 15.0, 16.3, 17.5, 18.7, 19.9, 21.1, 22.9, 24.7, 26.4, 28.2, 30.0, 32.2, 34.3, 35.7, 37.0, 39.4, 41.8, 44.7, 47.5, 50.4, 53.2, 56.8, 60.4, 62.7, 65.0, 66.5, 68.0, 69.0, 70.0, 70.0, 70.0, 70.5, 71.0], "97th": [4.3, 9.7, 11.8, 13.5, 15.1, 16.6, 18.0, 19.4, 20.9, 22.3, 23.8, 26.5, 29.2, 32.0, 34.7, 37.4, 40.2, 42.3, 44.3, 45.6, 48.6, 51.6, 54.8, 58.0, 61.5, 65.0, 68.5, 72.0, 74.3, 76.6, 77.6, 78.5, 79.3, 80.0, 80.0, 80.0, 80.0, 80.0]};
+const boyHeightData = {"Age": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5], " 3rd": [46.3, 63.6, 71.3, 77.2, 82.1, 85.5, 89.1, 92.4, 95.4, 98.4, 101.2, 103.9, 106.5, 109.2, 111.8, 114.5, 117.0, 119.5, 121.8, 124.0, 126.0, 128.0, 130.5, 133.0, 135.6, 138.2, 141.9, 145.5, 149.3, 153.0, 155.5, 158.0, 159.3, 160.5, 160.9, 161.0, 161.5, 162.0], "15th": [47.9, 65.4, 73.3, 79.5, 84.6, 88.4, 92.2, 95.7, 99.0, 102.1, 105.2, 107.9, 110.5, 113.2, 115.8, 118.5, 121.3, 124.0, 126.0, 128.0, 130.5, 133.0, 135.6, 138.1, 141.1, 144.0, 148.5, 153.0, 156.3, 159.6, 161.3, 163.0, 164.0, 165.0, 165.5, 166.0, 166.0, 166.0], "25th": [48.6, 66.2, 74.1, 80.4, 85.8, 89.6, 93.6, 97.2, 100.5, 103.7, 106.8, 109.5, 112.3, 115.0, 117.8, 120.5, 123.3, 126.0, 128.0, 130.0, 132.5, 135.0, 137.8, 140.5, 143.8, 147.0, 151.5, 156.0, 159.0, 162.0, 163.5, 165.0, 166.2, 167.3, 167.7, 168.0, 168.0, 168.0], "50th": [49.9, 67.6, 75.7, 82.3, 87.8, 91.9, 96.1, 99.9, 103.5, 106.7, 110.0, 112.8, 115.6, 118.4, 121.2, 124.0, 126.8, 129.5, 131.8, 134.0, 136.5, 139.0, 142.0, 145.0, 148.8, 152.5, 156.9, 161.2, 163.7, 166.2, 167.6, 169.0, 170.0, 171.0, 171.5, 172.0, 172.0, 172.0], "75th": [51.2, 69.1, 77.4, 84.1, 89.9, 94.2, 98.6, 102.5, 106.2, 109.6, 113.1, 116.0, 118.9, 121.7, 124.6, 127.5, 130.3, 133.0, 135.5, 138.0, 140.5, 143.0, 146.7, 150.4, 154.2, 158.0, 162.0, 166.0, 168.3, 170.5, 171.8, 173.0, 173.8, 174.5, 174.8, 175.0, 175.0, 175.0], "85th": [51.8, 69.8, 78.2, 85.1, 91.0, 95.5, 99.9, 104.0, 107.7, 111.2, 114.8, 117.7, 120.6, 123.6, 126.5, 129.4, 132.2, 135.0, 137.5, 140.0, 142.8, 145.5, 149.4, 153.2, 157.1, 161.0, 164.9, 168.7, 170.8, 172.8, 173.9, 175.0, 175.8, 176.5, 176.8, 177.0, 177.3, 177.5], "97th": [53.4, 71.6, 80.2, 87.3, 93.6, 98.3, 103.1, 107.3, 111.2, 115.0, 118.7, 121.8, 124.9, 128.1, 131.2, 134.3, 137.2, 140.0, 142.5, 145.0, 148.3, 151.5, 156.1, 160.7, 164.4, 168.0, 171.0, 174.0, 176.0, 178.0, 179.0, 180.0, 180.5, 181.0, 181.5, 182.0, 182.0, 182.0]};
+const girlWeightData = {"Age": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5], " 3rd": [2.4, 5.8, 7.1, 8.2, 9.2, 10.1, 11.0, 11.8, 12.5, 13.2, 14.0, 14.9, 15.9, 16.8, 17.8, 18.7, 19.6, 20.4, 21.5, 22.5, 23.8, 25.0, 26.5, 28.0, 29.8, 31.5, 33.5, 35.5, 37.1, 38.6, 39.3, 40.0, 40.5, 41.0, 41.5, 42.0, 42.0, 42.0], "15th": [2.8, 6.4, 7.9, 9.0, 10.1, 11.2, 12.1, 13.1, 14.0, 14.8, 15.7, 16.7, 17.7, 18.6, 19.6, 20.6, 21.8, 23.0, 24.0, 25.0, 26.6, 28.1, 30.3, 32.5, 34.8, 37.0, 38.7, 40.4, 41.7, 43.0, 43.8, 44.6, 44.8, 45.0, 45.2, 45.4, 45.7, 45.9], "25th": [2.9, 6.7, 8.2, 9.4, 10.6, 11.7, 12.7, 13.7, 14.7, 15.6, 16.5, 17.5, 18.5, 19.6, 20.6, 21.6, 22.8, 24.0, 25.3, 26.5, 28.3, 30.0, 32.5, 35.0, 37.1, 39.1, 40.9, 42.6, 43.8, 45.0, 45.7, 46.3, 46.7, 47.0, 47.2, 47.3, 47.3, 47.3], "50th": [3.2, 7.3, 8.9, 10.2, 11.5, 12.7, 13.9, 15.0, 16.1, 17.2, 18.2, 19.4, 20.5, 21.7, 22.8, 24.0, 25.4, 26.8, 28.2, 29.6, 31.8, 34.0, 36.9, 39.7, 41.7, 43.7, 45.4, 47.0, 48.1, 49.1, 49.6, 50.0, 50.5, 51.0, 51.0, 51.0, 51.0, 51.0], "75th": [3.6, 7.9, 9.7, 11.1, 12.5, 13.8, 15.1, 16.4, 17.7, 18.9, 20.2, 21.5, 22.8, 24.0, 25.3, 26.6, 28.4, 30.1, 32.1, 34.0, 36.7, 39.4, 42.2, 45.0, 47.0, 49.0, 50.5, 52.0, 53.0, 54.0, 54.5, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0, 55.0], "85th": [3.7, 8.3, 10.2, 11.6, 13.1, 14.5, 15.9, 17.3, 18.6, 20.0, 21.3, 22.7, 24.2, 25.6, 27.1, 28.5, 30.8, 33.0, 35.0, 36.9, 39.8, 42.7, 45.5, 48.2, 50.1, 52.0, 53.5, 55.0, 56.0, 57.0, 57.5, 58.0, 58.0, 58.0, 58.0, 58.0, 58.0, 58.0], "97th": [4.2, 9.2, 11.3, 13.0, 14.6, 16.2, 17.8, 19.5, 21.1, 22.8, 24.4, 26.5, 28.6, 30.8, 32.9, 35.0, 37.8, 40.5, 42.8, 45.0, 47.3, 49.6, 52.7, 55.8, 57.8, 59.7, 61.2, 62.7, 63.9, 65.0, 65.5, 66.0, 66.2, 66.4, 66.7, 67.0, 67.0, 67.0]};
+const girlHeightData = {"Age": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5], " 3rd": [45.6, 61.5, 69.2, 75.2, 80.3, 84.0, 87.9, 91.4, 94.6, 97.6, 100.5, 103.0, 105.5, 108.1, 110.6, 113.1, 115.7, 118.3, 120.7, 123.0, 125.8, 128.5, 131.8, 135.0, 137.9, 140.8, 143.2, 145.5, 146.8, 148.0, 148.5, 149.0, 149.5, 150.0, 150.0, 150.0, 150.0, 150.0], "15th": [47.2, 63.4, 71.3, 77.7, 83.1, 87.0, 91.1, 94.8, 98.3, 101.5, 104.5, 107.1, 109.7, 112.3, 114.9, 117.5, 120.3, 123.0, 125.5, 128.0, 131.0, 134.0, 137.5, 141.0, 143.8, 146.5, 148.5, 150.5, 151.3, 152.0, 152.5, 153.0, 153.5, 154.0, 154.0, 154.0, 154.0, 154.0], "25th": [47.9, 64.2, 72.3, 78.7, 84.2, 88.3, 92.5, 96.3, 99.8, 103.1, 106.2, 108.8, 111.3, 113.9, 116.4, 119.0, 122.0, 125.0, 127.5, 130.0, 133.0, 136.0, 139.8, 143.5, 146.3, 149.0, 150.7, 152.4, 153.2, 154.0, 154.5, 155.0, 155.3, 155.5, 155.8, 156.0, 156.0, 156.0], "50th": [49.1, 65.7, 74.0, 80.7, 86.4, 90.7, 95.1, 99.0, 102.7, 106.2, 109.4, 112.1, 114.8, 117.6, 120.3, 123.0, 125.8, 128.5, 131.3, 134.0, 137.5, 141.0, 144.5, 148.0, 150.5, 153.0, 154.5, 156.0, 156.8, 157.5, 157.9, 158.3, 158.7, 159.0, 159.3, 159.5, 159.5, 159.5], "75th": [50.4, 67.3, 75.8, 82.7, 88.6, 93.1, 97.6, 101.8, 105.6, 109.2, 112.6, 115.3, 118.0, 120.8, 123.5, 126.2, 129.2, 132.2, 135.4, 138.5, 142.3, 146.0, 149.4, 152.7, 154.9, 157.0, 158.4, 159.7, 160.4, 161.0, 161.5, 162.0, 162.3, 162.5, 162.8, 163.0, 163.0, 163.0], "85th": [51.1, 68.1, 76.7, 83.7, 89.8, 94.3, 99.0, 103.3, 107.2, 110.9, 114.4, 117.1, 119.9, 122.6, 125.4, 128.1, 131.3, 134.5, 137.8, 141.0, 144.8, 148.5, 151.8, 155.0, 157.0, 159.0, 160.3, 161.5, 162.3, 163.0, 163.5, 164.0, 164.2, 164.4, 164.7, 165.0, 165.0, 165.0], "97th": [52.7, 70.0, 78.9, 86.2, 92.5, 97.3, 102.2, 106.7, 110.8, 114.7, 118.4, 121.3, 124.2, 127.2, 130.1, 133.0, 136.5, 140.0, 143.5, 147.0, 150.8, 154.5, 157.3, 160.0, 161.8, 163.5, 164.8, 166.0, 167.0, 167.9, 168.2, 168.5, 168.8, 169.0, 169.0, 169.0, 169.0, 169.0]};
+
+const boyBMIData = {
+    "Age": [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5, 17, 17.5, 18, 18.5],
+    "underweight": [14.2, 13.9, 13.7, 13.6, 13.4, 13.3, 13.3, 13.4, 13.5, 13.6, 13.8, 14, 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.8, 15, 15.2, 15.4, 15.7, 16, 16.3, 16.6, 16.9, 17.2, 17.4, 17.6, 17.8, 18, 18.1, 18.2],
+    "overweight": [17.4, 17.2, 17, 16.8, 16.7, 16.7, 16.7, 16.7, 16.9, 17.3, 17.9, 18.6, 19, 19.3, 19.5, 19.7, 20, 20.3, 20.7, 21, 21.3, 21.5, 21.9, 22.2, 22.5, 22.7, 22.9, 23.1, 23.3, 23.4, 23.5, 23.6, 23.7, 23.7],
+    "obesity": [18.3, 18, 17.8, 17.7, 17.6, 17.6, 17.7, 18, 18.5, 19.2, 20.3, 21.2, 21.6, 22, 22.3, 22.5, 22.7, 22.9, 23.2, 23.5, 23.9, 24.2, 24.5, 24.8, 25, 25.2, 25.4, 25.5, 25.6, 25.6, 25.6, 25.6, 25.6]
+};
+
+const girlBMIData = {
+    "Age": [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5, 17, 17.5, 18, 18.5],
+    "underweight": [13.7, 13.6, 13.5, 13.3, 13.2, 13.1, 13.1, 13.1, 13.1, 13.2, 13.4, 13.7, 13.8, 13.9, 14, 14.1, 14.3, 14.4, 14.7, 14.9, 15.2, 15.4, 15.7, 16, 16.3, 16.5, 16.7, 16.9, 17.1, 17.2, 17.3, 17.3, 17.3, 17.3],
+    "overweight": [17.2, 17, 16.9, 16.8, 16.8, 16.9, 17, 17, 17.2, 17.5, 17.7, 18, 18.4, 18.8, 19.1, 19.3, 19.7, 20.1, 20.5, 20.9, 21.3, 21.6, 21.9, 22.2, 22.5, 22.7, 22.7, 22.7, 22.7, 22.7, 22.7, 22.7, 22.7, 22.7],
+    "obesity": [18.1, 17.9, 17.8, 17.8, 17.9, 18, 18.1, 18.3, 18.8, 19.2, 19.6, 20.3, 20.7, 21, 21.3, 21.6, 22, 22.3, 22.7, 23.1, 23.5, 23.9, 24.3, 24.6, 24.9, 25.1, 25.2, 25.3, 25.3, 25.3, 25.3, 25.3, 25.3, 25.3]
+};
+
+
+document.getElementById('birthdate').addEventListener('input', function() {
+    calculateAge();
+    executeAllFunctions();
+});
+
+function handleGenderChange() {
+    calculateAge();
+    executeAllFunctions();
+}
+
+
+function calculateAge() {
+    const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    let inputDate = document.getElementById('birthdate').value.trim();
+
+    // 判斷輸入是否是年齡
+    if (!isNaN(inputDate) && inputDate.length < 7 && parseFloat(inputDate) >= 0 && parseFloat(inputDate) <= 18) {
+        const numericValue = parseFloat(inputDate);
+        let genderText = document.getElementById('boy').checked ? '男孩' : '女孩';
+        document.getElementById('AgeResult').textContent = `${genderText} 年齡為 ${numericValue.toFixed(1)}歲`;
+        document.getElementById('age').value = numericValue;  // 儲存解析後的年齡
+        executeAllFunctions();
+        return;  // Exit the function early
+    }
+
+
+    // 判斷是否為8位數字日期格式
+    if (/^\d{8}$/.test(inputDate)) {
+        let year = parseInt(inputDate.substring(0, 4), 10);
+        let month = parseInt(inputDate.substring(4, 6), 10);
+        let day = parseInt(inputDate.substring(6, 8), 10);
+        
+        if (year < 2000) {
+            year += 1911;
+        }
+
+        inputDate = `${year}/${month}/${day}`;
+    }
+
+    // 判斷是否為7位數字民國年格式
+    else if (/^\d{7}$/.test(inputDate)) {
+        let year = parseInt(inputDate.substring(0, 3), 10) + 1911;
+        let month = parseInt(inputDate.substring(3, 5), 10);
+        let day = parseInt(inputDate.substring(5, 7), 10);
+        
+        inputDate = `${year}/${month}/${day}`;
+    }
+
+     // 檢查輸入值是否是數字且在有效範圍內
+    if (!isNaN(inputDate) && !inputDate.includes('/')) {
+        const ageNumber = parseInt(inputDate);
+        if (ageNumber < 0 || ageNumber > 18) {
+            document.getElementById('AgeResult').textContent = "年齡請輸入0-18歲！";
+            return;
+        }
+        birthdate = new Date(new Date().getFullYear() - ageNumber, 0, 1);
+    } else {
+
+        // Handle the case where the input is a date
+        let yearPart = parseInt(inputDate.split('/')[0]);
+        if (yearPart < 1900) {
+            yearPart += 1911;
+        }
+        let monthPart = parseInt(inputDate.split('/')[1]);
+        let dayPart = parseInt(inputDate.split('/')[2]);
+
+        // Update February days for leap years
+        daysInMonths[1] = (yearPart % 4 === 0 && (yearPart % 100 !== 0 || yearPart % 400 === 0)) ? 29 : 28;
+
+        if (monthPart < 1 || monthPart > 12 || dayPart < 1 || dayPart > daysInMonths[monthPart - 1]) {
+            console.log("Month:", monthPart, "Day:", dayPart);
+            document.getElementById('AgeResult').textContent = "生日格式錯誤";
+            return;  // Exit the function early
+        }
+
+        birthdate = new Date(yearPart, monthPart - 1, dayPart);
+    }
+
+    const today = new Date();
+    const diffTime = Math.abs(today - birthdate);
+    const ageInMilliseconds = diffTime;
+    const ageInSeconds = ageInMilliseconds / 1000;
+    const ageInMinutes = ageInSeconds / 60;
+    const ageInHours = ageInMinutes / 60;
+    const ageInDays = ageInHours / 24;
+    const ageInYears = ageInDays / 365.25;  // accounting for leap years
+
+    // Check if the age is over 18
+    if (ageInYears > 18) {
+        document.getElementById('AgeResult').textContent = "年齡請輸入0-18歲！";
+        return;
+    }
+
+    // Setting the age input field
+    document.getElementById('age').value = ageInYears.toFixed(2);
+
+    // Getting the gender
+    const gender = document.querySelector('input[name="gender"]:checked').value;
+    const genderText = gender === "boy" ? "男孩 " : "女孩 ";
+
+    // Displaying age in "years-months-days" format considering actual days in each month and leap years
+    const years = Math.floor(ageInYears);
+    let remainingMonths = (ageInYears - years) * 12;
+    const months = Math.floor(remainingMonths);
+    let days = Math.floor((remainingMonths - months) * daysInMonths[months]);
+    document.getElementById('AgeResult').textContent = genderText + '年齡為 ' + years + '歲 ' + months + ' 個月又 ' + days + ' 天';
+
+}
+
+function interpolate_value(value, x1, x2, y1, y2) {
+    return y1 + ((value - x1) * (y2 - y1)) / (x2 - x1);
+}
+
+function findClosestIndices(value, array) {
+    let lowIndex = 0;
+    let highIndex = array.length - 1;
+
+    while (lowIndex <= highIndex) {
+        let midIndex = Math.floor((lowIndex + highIndex) / 2);
+        if (array[midIndex] < value) {
+            lowIndex = midIndex + 1;
+        } else if (array[midIndex] > value) {
+            highIndex = midIndex - 1;
+        } else {
+            return [midIndex, midIndex];
+        }
+    }
+    return [highIndex, lowIndex];
+}
+
+function find_bounding_values(value, dataset) {
+    let percentiles = Object.keys(dataset);
+    for (let i = 1; i < percentiles.length; i++) {
+        if (dataset[percentiles[i]] >= value) {
+            return [percentiles[i-1], percentiles[i]];
+        }
+    }
+    return [percentiles[percentiles.length - 2], percentiles[percentiles.length - 1]];
+}
+
+function formatPercentileDisplay(percentile, bounds) {
+    const exactPercentiles = {
+        3: "3rd",
+        15: "15th",
+        50: "50th",
+        85: "85th",
+        97: "97th"
+    };
+
+    if (percentile < 3) {
+        return "低於百分之3";
+    } else if (percentile > 97) {
+        return "超過百分之97";
+    } else if (exactPercentiles[Math.round(percentile)]) {
+        return exactPercentiles[Math.round(percentile)];
+    } else {
+        return percentile.toFixed(1) + `&nbsp;(${bounds[0]}-${bounds[1]})`;
+    }
+}
+
+function displayResults() {
+    let gender = document.querySelector('input[name="gender"]:checked').value;
+    let ageValue = document.getElementById("age").value;
+    let height = parseFloat(document.getElementById("height").value);
+    let weight = parseFloat(document.getElementById("weight").value);
+
+    // Check if the age input field is empty
+    if (!ageValue || ageValue.trim() === "") {
+        document.getElementById('result').textContent = "請輸入年齡";
+        return;  // Exit the function early
+    }
+
+    // Check if height and weight are valid numbers
+    if (isNaN(height) || isNaN(weight)) {
+        document.getElementById('result').textContent = "";  // Clear the result
+        return;  // Exit the function early
+    }
+
+    let age = parseFloat(ageValue);
+    
+    let heightData = gender === "girl" ? girlHeightData : boyHeightData;
+    let weightData = gender === "girl" ? girlWeightData : boyWeightData;
+
+    let age_indices = findClosestIndices(age, heightData["Age"]);
+    let age_height_data = {};
+    let age_weight_data = {};
+
+    // 如果年齡正好在資料集中，直接提取該年齡的數據
+    if (heightData["Age"].includes(age)) {
+        let age_index = heightData["Age"].indexOf(age);
+        for (let percentile in heightData) {
+            if (percentile !== "Age") {
+                age_height_data[percentile] = heightData[percentile][age_index];
+                age_weight_data[percentile] = weightData[percentile][age_index];
+            }
+        }
+    } else {
+        // 如果年齡不在資料集中，使用內插法提取數據
+        for (let percentile in heightData) {
+            if (percentile !== "Age") {
+                age_height_data[percentile] = interpolate_value(
+                    age, 
+                    heightData["Age"][age_indices[0]], 
+                    heightData["Age"][age_indices[1]], 
+                    heightData[percentile][age_indices[0]], 
+                    heightData[percentile][age_indices[1]]
+                );
+                age_weight_data[percentile] = interpolate_value(
+                    age, 
+                    weightData["Age"][age_indices[0]], 
+                    weightData["Age"][age_indices[1]], 
+                    weightData[percentile][age_indices[0]], 
+                    weightData[percentile][age_indices[1]]
+                );
+            }
+        }
+    }
+
+    // Calculate the interpolated percentile for the provided height and weight
+    let height_bounds = find_bounding_values(height, age_height_data);
+    let weight_bounds = find_bounding_values(weight, age_weight_data);
+
+    let height_percentile = interpolate_value(
+        height, 
+        age_height_data[height_bounds[0]], 
+        age_height_data[height_bounds[1]], 
+        parseFloat(height_bounds[0]), 
+        parseFloat(height_bounds[1])
+    );
+
+    let weight_percentile = interpolate_value(
+        weight, 
+        age_weight_data[weight_bounds[0]], 
+        age_weight_data[weight_bounds[1]], 
+        parseFloat(weight_bounds[0]), 
+        parseFloat(weight_bounds[1])
+    );
+
+    // Determine the display text based on the percentile value
+    let height_display;
+    if (height_percentile > 97) {
+        height_display = `身高${height}cm；百分位超過97`;
+    } else if (height_percentile < 3) {
+        height_display = `身高${height}cm；百分位低於3`;
+    } else {
+        height_display = `身高${height}cm；百分位${height_percentile.toFixed(1)}`;
+    }
+
+    let weight_display;
+    if (weight_percentile > 97) {
+        weight_display = `體重${weight}kg；百分位超過97`;
+    } else if (weight_percentile < 3) {
+        weight_display = `體重${weight}kg；百分位低於3`;
+    } else {
+        weight_display = `體重${weight}kg；百分位${weight_percentile.toFixed(1)}`;
+    }
+
+    document.getElementById("result").innerHTML = `${height_display}<br>${weight_display}`;
+}
+
+function calculateInheritedHeight() {
+    const gender = document.querySelector('input[name="gender"]:checked').value;
+    const fatherHeightValue = document.getElementById('fatherHeight').value;
+    const motherHeightValue = document.getElementById('motherHeight').value;
+    const resultElement = document.getElementById('InheritedResult');
+
+    // Check if the heights are provided and are valid numbers
+    if (!fatherHeightValue || !motherHeightValue || isNaN(fatherHeightValue) || isNaN(motherHeightValue)) {
+        resultElement.innerText = '';  // Clear the result
+        return;  // Exit the function early to prevent further calculations
+    }
+
+    const fatherHeight = parseFloat(fatherHeightValue);
+    const motherHeight = parseFloat(motherHeightValue);
+    let inheritedHeight = 0;
+    let range = 0;
+
+    if (gender === 'boy') {
+        inheritedHeight = (fatherHeight + motherHeight + 13) / 2 ;
+        range = 7.5;  // Range for boys
+    } else {
+        inheritedHeight = (fatherHeight + motherHeight - 13) / 2 ;
+        range = 6;  // Range for girls
+    }
+
+resultElement.innerHTML = '預估目標身高為： ' + inheritedHeight.toFixed(1) + ' 公分<br>( ' + (inheritedHeight - range).toFixed(1) + ' 公分' + ' - ' + (inheritedHeight + range).toFixed(1) + ' 公分 )';
+
+
+}
+
+function calculateBMI(weight, height) {
+    return (weight / Math.pow(height / 100, 2)).toFixed(2); // 將身高轉換為米再計算BMI
+}
+
+function interpolate(x, x0, x1, y0, y1) {
+    return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
+}
+
+function determineWeightCategory(bmi, age, gender) {
+    const bmiData = gender === "boy" ? boyBMIData : girlBMIData;
+    const ages = bmiData["Age"];
+    const underweight = bmiData["underweight"];
+    const overweight = bmiData["overweight"];
+    const obesity = bmiData["obesity"];
+
+    // 找到年齡範圍內的索引
+    let lowerIndex = -1;
+    let upperIndex = -1;
+    for (let i = 0; i < ages.length; i++) {
+        if (ages[i] <= age) lowerIndex = i;
+        if (ages[i] >= age && upperIndex === -1) upperIndex = i;
+    }
+
+    // 如果年齡在範圍外，返回 "無法判斷"
+    if (lowerIndex === -1 || upperIndex === -1) {
+        return "無法判斷";
+    }
+
+    // 如果年齡恰好在表格中的年齡點上，直接取值
+    if (ages[lowerIndex] === age) {
+        if (bmi < underweight[lowerIndex]) {
+            return "體重過輕";
+        } else if (bmi >= underweight[lowerIndex] && bmi < overweight[lowerIndex]) {
+            return "體重適中";
+        } else if (bmi >= overweight[lowerIndex] && bmi < obesity[lowerIndex]) {
+            return "體重過重";
+        } else {
+            return "肥胖";
+        }
+    }
+
+    // 否則使用插值法估算
+    const uw = interpolate(age, ages[lowerIndex], ages[upperIndex], underweight[lowerIndex], underweight[upperIndex]);
+    const ow = interpolate(age, ages[lowerIndex], ages[upperIndex], overweight[lowerIndex], overweight[upperIndex]);
+    const ob = interpolate(age, ages[lowerIndex], ages[upperIndex], obesity[lowerIndex], obesity[upperIndex]);
+
+    if (bmi < uw) {
+        return "體重過輕";
+    } else if (bmi >= uw && bmi < ow) {
+        return "體重適中";
+    } else if (bmi >= ow && bmi < ob) {
+        return "體重過重";
+    } else {
+        return "肥胖";
+    }
+}
+
+function displayBMIResult() {
+    let ageValue = document.getElementById("age").value;
+    let height = parseFloat(document.getElementById("height").value);
+    let weight = parseFloat(document.getElementById("weight").value);
+    const gender = document.querySelector('input[name="gender"]:checked').value;
+
+    if (!ageValue || isNaN(height) || isNaN(weight)) {
+        document.getElementById('BMIResult').textContent = "請輸入完整資料以計算BMI";
+        return;
+    }
+
+    let age = parseFloat(ageValue);
+    let bmi = calculateBMI(weight, height);
+    let category = determineWeightCategory(bmi, age, gender);
+    
+    document.getElementById('BMIResult').textContent = `BMI：${bmi} (${category})`;
+}
+
+function executeAllFunctions() {
+    displayResults();
+    calculateInheritedHeight();
+    displayBMIResult();
+}
+
+function copyResults() {
+    const ageResult = document.getElementById('AgeResult').innerText;
+    const result = document.getElementById('result').innerText;
+    const bmiResult = document.getElementById('BMIResult').innerText;
+    const inheritedResult = document.getElementById('InheritedResult').innerText;
+    const currentDate = document.getElementById('currentDate').innerText;
+    
+    const textToCopy = `${ageResult}\n${result}\n${bmiResult}\n${inheritedResult}\n${currentDate}`;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        // navigator.clipboard API method
+        navigator.clipboard.writeText(textToCopy).then(function() {
+            alert('計算結果已複製到剪貼簿');
+        }, function(err) {
+            alert('無法複製');
+        });
+    } else {
+        // Fallback method
+        const copyTextArea = document.getElementById('copyTextArea');
+        copyTextArea.value = textToCopy;
+        copyTextArea.style.display = 'block'; // Temporary show textarea for iOS
+        copyTextArea.select();
+        copyTextArea.setSelectionRange(0, 99999); // For mobile devices
+
+        try {
+            const successful = document.execCommand('copy');
+            const msg = successful ? '計算結果已複製到剪貼簿' : '無法複製';
+            alert(msg);
+        } catch (err) {
+            alert('無法複製');
+        }
+
+        copyTextArea.style.display = 'none'; // Hide it back
+    }
+}
+
+document.getElementById('copyButton').addEventListener('click', copyResults);
+
+function displayCurrentDate() {
+    const currentDateElement = document.getElementById('currentDate');
+    const now = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = now.toLocaleDateString('zh-TW', options);
+    currentDateElement.textContent = `目前日期：${formattedDate}`;
+}
+
+window.onload = function() {
+    displayAddToHomeScreenPrompt();
+    displayCurrentDate();
+}
+
+function generateICSFile() {
+    const ageResult = document.getElementById('AgeResult').innerText;
+    const result = document.getElementById('result').innerText;
+    const bmiResult = document.getElementById('BMIResult').innerText;
+    const inheritedResult = document.getElementById('InheritedResult').innerText;
+    const currentDate = document.getElementById('currentDate').innerText;
+
+    const eventDescription = `${ageResult}\n${result}\n${bmiResult}\n${inheritedResult}\n${currentDate}`;
+
+    const icsContent = `
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:生長曲線計算結果
+DESCRIPTION:${eventDescription}
+DTSTART:${formatDate(new Date())}
+DTEND:${formatDate(new Date())}
+END:VEVENT
+END:VCALENDAR
+    `.trim();
+
+    const blob = new Blob([icsContent], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'growth_chart_result.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}${month}${day}`;
+}
+
+document.getElementById('downloadICSButton').addEventListener('click', generateICSFile);
+
+
+</script>
+
+

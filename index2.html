@@ -100,7 +100,7 @@
         <hr>
 <p style='text-align: left; '>
 程式維護：<a href="https://www.facebook.com/profile.php?id=61557246475372" target="_blank">仨寶爸中醫博士吳啓銘醫師</a><br>
-程式版本：2024/06/12
+程式版本：2024/06/26
 </p>
 
 </body>
@@ -634,15 +634,20 @@ END:VEVENT
 END:VCALENDAR
     `.trim();
 
-    // 使用 data: URL 来生成 iCalendar 文件内容
-    const dataUrl = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsContent);
+    const blob = new Blob([icsContent], { type: 'text/calendar' });
 
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = 'growth_chart_result.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // 使用 FileReader 来生成 Blob URL
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const url = event.target.result;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'growth_chart_result.ics';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+    reader.readAsDataURL(blob);
 }
 
 function formatDate(date) {
@@ -653,7 +658,6 @@ function formatDate(date) {
 }
 
 document.getElementById('downloadICSButton').addEventListener('click', generateICSFile);
-
 
 </script>
 

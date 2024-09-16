@@ -3,36 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>手機提詞器</title>
+    <title>手機題詞器</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa; /* 淡灰色背景，更加舒適 */
+            background-color: #f8f9fa;
         }
 
         #controls {
             padding: 20px;
             background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 添加輕微陰影 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin: 0 auto;
-            max-width: 600px; /* 設置最大寬度 */
-            border-radius: 10px; /* 圓角設計 */
-            text-align: center; /* 置中對齊 */
+            max-width: 600px;
+            border-radius: 10px;
+            text-align: center;
         }
 
         #controls label {
             display: block;
             margin: 15px 0 5px;
             font-weight: bold;
-            font-size: 16px; /* 調整字體大小，易於閱讀 */
+            font-size: 16px;
             color: #333;
         }
 
         #controls input, #controls select {
-            width: 80%; /* 縮小圖標和輸入框寬度 */
+            width: 80%;
             padding: 10px;
             margin: 5px 0 15px;
             font-size: 16px;
@@ -43,29 +43,34 @@
 
         #controls input[type="number"], #controls input[type="color"] {
             width: 50%;
-            display: inline-block; /* 調整大小並放置同一行 */
+            display: inline-block;
         }
 
-        #controls input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
+        #colorPreview {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-left: 10px;
+            border: 1px solid #ccc;
+            vertical-align: middle;
         }
 
         /* 美化開始滾動按鈕 */
         #startBtn {
-            background-color: #007bff; /* 藍色背景 */
+            background-color: #007bff;
             color: #fff;
             border: none;
             padding: 15px 30px;
-            font-size: 18px; /* 顯眼的字體大小 */
-            border-radius: 30px; /* 圓角按鈕 */
+            font-size: 18px;
+            border-radius: 30px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            width: 100%; /* 全寬按鈕 */
+            width: 100%;
         }
 
         #startBtn:hover {
-            background-color: #0056b3; /* 深色背景效果 */
+            background-color: #0056b3;
         }
 
         #display {
@@ -133,9 +138,11 @@
 
     <label for="bgColor">背景顏色：</label>
     <input type="color" id="bgColor" value="#000000">
+    <span id="bgColorPreview" class="colorPreview"></span>
 
     <label for="fontColor">字體顏色：</label>
     <input type="color" id="fontColor" value="#FFFFFF">
+    <span id="fontColorPreview" class="colorPreview"></span>
 
     <label for="fontSize">字體大小：</label>
     <input type="number" id="fontSize" value="50" min="10" max="200"> px
@@ -149,6 +156,7 @@
 
     <label for="refLineColor">參考線顏色：</label>
     <input type="color" id="refLineColor" value="#FF0000">
+    <span id="refLineColorPreview" class="colorPreview"></span>
 
     <label for="refLineWidth">參考線粗細：</label>
     <input type="number" id="refLineWidth" value="2" min="1" max="10"> px
@@ -186,6 +194,12 @@
     const pauseBtn = document.getElementById('pauseBtn');
     const exitBtn = document.getElementById('exitBtn');
     const controlButtons = document.getElementById('controlButtons');
+    const bgColorInput = document.getElementById('bgColor');
+    const fontColorInput = document.getElementById('fontColor');
+    const refLineColorInput = document.getElementById('refLineColor');
+    const bgColorPreview = document.getElementById('bgColorPreview');
+    const fontColorPreview = document.getElementById('fontColorPreview');
+    const refLineColorPreview = document.getElementById('refLineColorPreview');
 
     let animationFrame;
     let isPaused = false;
@@ -197,6 +211,23 @@
     let currentTranslateY;
     let lastTimestamp;
 
+        // 初始化顯示當前顏色
+    bgColorPreview.style.backgroundColor = bgColorInput.value;
+    fontColorPreview.style.backgroundColor = fontColorInput.value;
+    refLineColorPreview.style.backgroundColor = refLineColorInput.value;
+
+    // 當顏色變化時更新顏色顯示框
+    bgColorInput.addEventListener('input', function() {
+        bgColorPreview.style.backgroundColor = bgColorInput.value;
+    });
+
+    fontColorInput.addEventListener('input', function() {
+        fontColorPreview.style.backgroundColor = fontColorInput.value;
+    });
+
+    refLineColorInput.addEventListener('input', function() {
+        refLineColorPreview.style.backgroundColor = refLineColorInput.value;
+    });
     startBtn.addEventListener('click', () => {
         // 設置文本樣式和內容
         text.style.fontFamily = fontFamily.value;

@@ -39,7 +39,7 @@
             text-align: center;
         }
         #display.mirror {
-            transform: scaleY(-1);
+            transform: scaleX(-1); /* 僅鏡像文字 */
         }
         #text {
             white-space: pre-wrap;
@@ -47,7 +47,7 @@
         }
         #referenceLine {
             position: absolute;
-            top: 50%;
+            top: 50%; /* 固定在螢幕中央 */
             left: 0;
             width: 100%;
             border-top: 2px solid red;
@@ -65,12 +65,6 @@
         #controlButtons button {
             padding: 10px 20px;
             font-size: 16px;
-        }
-        /* 全螢幕樣式 */
-        @media screen and (orientation: portrait) {
-            #display {
-                height: 100vh;
-            }
         }
     </style>
 </head>
@@ -119,6 +113,8 @@
 
 <div id="controlButtons" style="display: none;">
     <button id="pauseBtn">暫停</button>
+    <button id="increaseFontSizeBtn">字體變大</button>
+    <button id="decreaseFontSizeBtn">字體變小</button>
     <button id="speedUpBtn">加速</button>
     <button id="speedDownBtn">減速</button>
     <button id="exitBtn">退出全屏</button>
@@ -139,6 +135,8 @@
     const text = document.getElementById('text');
     const referenceLine = document.getElementById('referenceLine');
     const pauseBtn = document.getElementById('pauseBtn');
+    const increaseFontSizeBtn = document.getElementById('increaseFontSizeBtn');
+    const decreaseFontSizeBtn = document.getElementById('decreaseFontSizeBtn');
     const speedUpBtn = document.getElementById('speedUpBtn');
     const speedDownBtn = document.getElementById('speedDownBtn');
     const exitBtn = document.getElementById('exitBtn');
@@ -147,6 +145,7 @@
     let animationFrame;
     let isPaused = false;
     let currentSpeed;
+    let currentFontSize;
     let startTime;
     let pausedTime = 0;
     let startPosition;
@@ -154,7 +153,8 @@
     startBtn.addEventListener('click', () => {
         // 設置文本樣式和內容
         text.style.fontFamily = fontFamily.value;
-        text.style.fontSize = fontSize.value + 'px';
+        currentFontSize = parseInt(fontSize.value);
+        text.style.fontSize = currentFontSize + 'px';
         text.style.color = fontColor.value;
         text.innerText = inputText.value;
         display.style.backgroundColor = bgColor.value;
@@ -214,6 +214,18 @@
     pauseBtn.addEventListener('click', () => {
         isPaused = !isPaused;
         pauseBtn.textContent = isPaused ? '繼續' : '暫停';
+    });
+
+    increaseFontSizeBtn.addEventListener('click', () => {
+        currentFontSize += 5;
+        text.style.fontSize = currentFontSize + 'px';
+    });
+
+    decreaseFontSize
+
+Btn.addEventListener('click', () => {
+        currentFontSize = Math.max(10, currentFontSize - 5);
+        text.style.fontSize = currentFontSize + 'px';
     });
 
     speedUpBtn.addEventListener('click', () => {

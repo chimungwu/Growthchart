@@ -44,21 +44,16 @@
 }
 
 #display.mirror {
-    transform: scaleX(-1);
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
+    transform: rotateY(180deg);
+}
+
+#textContainer.mirror {
+    transform: rotateY(180deg);
 }
 
 /* 文字容器 */
 #textContainer {
-    display: inline-block;
-}
-
-/* 對文字容器再次應用鏡像效果 */
-#textContainer.mirror {
-    transform: scaleX(-1);
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
+    display: block;
 }
 
 #text {

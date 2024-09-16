@@ -172,7 +172,7 @@
         // 初始化滾動參數
         isPaused = false;
         currentSpeed = parseInt(speed.value);
-        startPosition = display.offsetHeight / 2; // 讓文字從參考線下方開始滾動
+        startPosition = 0; // 讓第一行文字從可視畫面的底部開始滾動
         text.style.transform = `translateY(${startPosition}px)`;
         startTime = null;
         pausedTime = 0;

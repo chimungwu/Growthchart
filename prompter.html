@@ -173,17 +173,17 @@
         // 進入全螢幕模式
         enterFullScreen();
 
-        // 初始化滾動參數
-        isPaused = false;
-        currentSpeed = parseInt(speed.value);
+// 初始化滾動參數
+isPaused = false;
+currentSpeed = parseInt(speed.value);
 startPosition = window.innerHeight; // 使用視口高度
 text.style.transform = `translateY(${startPosition}px)`;
+startTime = null;
+pausedTime = 0;
 
-        startTime = null;
-        pausedTime = 0;
+// 開始滾動
+requestAnimationFrame(scrollText);
 
-        // 開始滾動
-        requestAnimationFrame(scrollText);
     });
 
 function scrollText(timestamp) {

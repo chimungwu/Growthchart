@@ -2,36 +2,75 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>簡單的題詞器</title>
+    <title>手機題詞器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        body, html {
             margin: 0;
+            padding: 0;
+            height: 100%;
             font-family: Arial, sans-serif;
         }
         #controls {
             padding: 10px;
             background-color: #f0f0f0;
         }
-        #controls input, #controls label, #controls button {
-            margin-right: 10px;
+        #controls label {
+            display: block;
+            margin-top: 10px;
+        }
+        #controls input, #controls select, #controls button, #controls textarea {
+            width: 100%;
+            margin-top: 5px;
+        }
+        #inputText {
+            height: 150px;
+            resize: vertical;
         }
         #display {
             position: relative;
             overflow: hidden;
-            height: calc(100vh - 70px);
             background-color: #000;
             color: #fff;
             font-size: 50px;
-            display: flex;
-            align-items: center;
+            display: none;
             justify-content: center;
-            transform: scaleX(1);
+            align-items: center;
+            text-align: center;
         }
         #display.mirror {
-            transform: scaleX(-1);
+            transform: scaleY(-1);
         }
         #text {
-            white-space: nowrap;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        #referenceLine {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            border-top: 2px solid red;
+            pointer-events: none;
+        }
+        #controlButtons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+        #controlButtons button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        /* 全螢幕樣式 */
+        @media screen and (orientation: portrait) {
+            #display {
+                height: 100vh;
+            }
         }
     </style>
 </head>
@@ -39,7 +78,15 @@
 
 <div id="controls">
     <label for="inputText">輸入文字：</label>
-    <input type="text" id="inputText" size="50" value="這是一個簡單的題詞器。">
+    <textarea id="inputText">這是一個簡單的題詞器。</textarea>
+
+    <label for="fontFamily">選擇字體：</label>
+    <select id="fontFamily">
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="'微軟正黑體', sans-serif">微軟正黑體</option>
+        <option value="'Times New Roman', serif">Times New Roman</option>
+        <option value="'Courier New', monospace">Courier New</option>
+    </select>
 
     <label for="bgColor">背景顏色：</label>
     <input type="color" id="bgColor" value="#000000">
@@ -48,57 +95,184 @@
     <input type="color" id="fontColor" value="#FFFFFF">
 
     <label for="fontSize">字體大小：</label>
-    <input type="number" id="fontSize" value="50" min="10" max="200">px
+    <input type="number" id="fontSize" value="50" min="10" max="200"> px
 
     <label for="speed">滾動速度：</label>
-    <input type="number" id="speed" value="50" min="10" max="200">px/s
+    <input type="number" id="speed" value="50" min="10" max="200"> px/s
 
     <label for="mirror">鏡像文字：</label>
     <input type="checkbox" id="mirror">
+
+    <label for="refLineColor">參考線顏色：</label>
+    <input type="color" id="refLineColor" value="#FF0000">
+
+    <label for="refLineWidth">參考線粗細：</label>
+    <input type="number" id="refLineWidth" value="2" min="1" max="10"> px
 
     <button id="startBtn">開始滾動</button>
 </div>
 
 <div id="display">
     <div id="text"></div>
+    <div id="referenceLine"></div>
+</div>
+
+<div id="controlButtons" style="display: none;">
+    <button id="pauseBtn">暫停</button>
+    <button id="speedUpBtn">加速</button>
+    <button id="speedDownBtn">減速</button>
+    <button id="exitBtn">退出全屏</button>
 </div>
 
 <script>
     const inputText = document.getElementById('inputText');
+    const fontFamily = document.getElementById('fontFamily');
     const bgColor = document.getElementById('bgColor');
     const fontColor = document.getElementById('fontColor');
     const fontSize = document.getElementById('fontSize');
     const speed = document.getElementById('speed');
     const mirror = document.getElementById('mirror');
+    const refLineColor = document.getElementById('refLineColor');
+    const refLineWidth = document.getElementById('refLineWidth');
     const startBtn = document.getElementById('startBtn');
     const display = document.getElementById('display');
     const text = document.getElementById('text');
+    const referenceLine = document.getElementById('referenceLine');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const speedUpBtn = document.getElementById('speedUpBtn');
+    const speedDownBtn = document.getElementById('speedDownBtn');
+    const exitBtn = document.getElementById('exitBtn');
+    const controlButtons = document.getElementById('controlButtons');
 
-    let animationId;
+    let animationFrame;
+    let isPaused = false;
+    let currentSpeed;
+    let startTime;
+    let pausedTime = 0;
+    let startPosition;
 
     startBtn.addEventListener('click', () => {
-        cancelAnimationFrame(animationId);
-        text.style.transition = 'none';
-        text.style.transform = 'translateX(100%)';
-
+        // 設置文本樣式和內容
+        text.style.fontFamily = fontFamily.value;
+        text.style.fontSize = fontSize.value + 'px';
+        text.style.color = fontColor.value;
         text.innerText = inputText.value;
         display.style.backgroundColor = bgColor.value;
-        display.style.color = fontColor.value;
-        display.style.fontSize = fontSize.value + 'px';
 
+        // 設置鏡像效果
         if (mirror.checked) {
             display.classList.add('mirror');
         } else {
             display.classList.remove('mirror');
         }
 
-        const totalWidth = text.offsetWidth + display.offsetWidth;
-        const duration = totalWidth / speed.value * 1000;
+        // 設置參考線樣式
+        referenceLine.style.borderTopColor = refLineColor.value;
+        referenceLine.style.borderTopWidth = refLineWidth.value + 'px';
 
-        setTimeout(() => {
-            text.style.transition = 'transform ' + duration + 'ms linear';
-            text.style.transform = 'translateX(-' + text.offsetWidth + 'px)';
-        }, 50);
+        // 顯示題詞器
+        display.style.display = 'flex';
+        controlButtons.style.display = 'flex';
+        document.getElementById('controls').style.display = 'none';
+
+        // 進入全螢幕模式
+        enterFullScreen();
+
+        // 初始化滾動參數
+        isPaused = false;
+        currentSpeed = parseInt(speed.value);
+        startPosition = display.offsetHeight;
+        text.style.transform = `translateY(${startPosition}px)`;
+        startTime = null;
+        pausedTime = 0;
+
+        // 開始滾動
+        requestAnimationFrame(scrollText);
+    });
+
+    function scrollText(timestamp) {
+        if (!startTime) startTime = timestamp;
+        if (isPaused) {
+            pausedTime += timestamp - startTime;
+            startTime = timestamp;
+            animationFrame = requestAnimationFrame(scrollText);
+            return;
+        }
+        const elapsed = timestamp - startTime - pausedTime;
+        const distance = elapsed * currentSpeed / 1000;
+        const translateY = startPosition - distance;
+        text.style.transform = `translateY(${translateY}px)`;
+        if (translateY + text.offsetHeight > 0) {
+            animationFrame = requestAnimationFrame(scrollText);
+        } else {
+            // 滾動結束，退出全屏
+            exitFullScreen();
+        }
+    }
+
+    // 控制按鈕事件
+    pauseBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '繼續' : '暫停';
+    });
+
+    speedUpBtn.addEventListener('click', () => {
+        currentSpeed += 10;
+    });
+
+    speedDownBtn.addEventListener('click', () => {
+        currentSpeed = Math.max(10, currentSpeed - 10);
+    });
+
+    exitBtn.addEventListener('click', () => {
+        cancelAnimationFrame(animationFrame);
+        exitFullScreen();
+    });
+
+    // 點擊屏幕暫停/繼續
+    display.addEventListener('click', () => {
+        isPaused = !isPaused;
+        pauseBtn.textContent = isPaused ? '繼續' : '暫停';
+    });
+
+    // 進入全螢幕模式
+    function enterFullScreen() {
+        const docElm = document.documentElement;
+        if (docElm.requestFullscreen) {
+            docElm.requestFullscreen();
+        } else if (docElm.mozRequestFullScreen) { /* Firefox */
+            docElm.mozRequestFullScreen();
+        } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            docElm.webkitRequestFullscreen();
+        } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+            docElm.msRequestFullscreen();
+        }
+    }
+
+    // 退出全螢幕模式
+    function exitFullScreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { /* Firefox */
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE/Edge */
+            document.msExitFullscreen();
+        }
+        display.style.display = 'none';
+        controlButtons.style.display = 'none';
+        document.getElementById('controls').style.display = 'block';
+    }
+
+    // 防止控制按鈕在全螢幕模式下自動隱藏
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            display.style.display = 'none';
+            controlButtons.style.display = 'none';
+            document.getElementById('controls').style.display = 'block';
+            cancelAnimationFrame(animationFrame);
+        }
     });
 </script>
 

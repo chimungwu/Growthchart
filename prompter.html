@@ -39,9 +39,12 @@
             text-align: center;
             height: 100vh; /* 保持全屏可視範圍 */
         }
-        #display.mirror {
-            transform: scaleX(-1); /* 僅鏡像文字，不改變排列順序 */
-        }
+#display.mirror {
+    transform: scaleX(-1); /* 鏡像文字，但保持方向 */
+}
+#text {
+    direction: ltr; /* 確保即使在鏡像模式下，文字仍然從左到右排列 */
+}
         #text {
             white-space: pre-wrap;
             line-height: 1.5;
@@ -172,7 +175,7 @@
         // 初始化滾動參數
         isPaused = false;
         currentSpeed = parseInt(speed.value);
-        startPosition = 0; // 文字從螢幕底部開始
+        startPosition = display.offsetHeight / 2; // 讓文字從參考線下方開始滾動
         text.style.transform = `translateY(${startPosition}px)`;
         startTime = null;
         pausedTime = 0;

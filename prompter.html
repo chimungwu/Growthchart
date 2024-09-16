@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>簡單的題詞器</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #controls {
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+        #controls input, #controls label, #controls button {
+            margin-right: 10px;
+        }
+        #display {
+            position: relative;
+            overflow: hidden;
+            height: calc(100vh - 70px);
+            background-color: #000;
+            color: #fff;
+            font-size: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scaleX(1);
+        }
+        #display.mirror {
+            transform: scaleX(-1);
+        }
+        #text {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<div id="controls">
+    <label for="inputText">輸入文字：</label>
+    <input type="text" id="inputText" size="50" value="這是一個簡單的題詞器。">
+
+    <label for="bgColor">背景顏色：</label>
+    <input type="color" id="bgColor" value="#000000">
+
+    <label for="fontColor">字體顏色：</label>
+    <input type="color" id="fontColor" value="#FFFFFF">
+
+    <label for="fontSize">字體大小：</label>
+    <input type="number" id="fontSize" value="50" min="10" max="200">px
+
+    <label for="speed">滾動速度：</label>
+    <input type="number" id="speed" value="50" min="10" max="200">px/s
+
+    <label for="mirror">鏡像文字：</label>
+    <input type="checkbox" id="mirror">
+
+    <button id="startBtn">開始滾動</button>
+</div>
+
+<div id="display">
+    <div id="text"></div>
+</div>
+
+<script>
+    const inputText = document.getElementById('inputText');
+    const bgColor = document.getElementById('bgColor');
+    const fontColor = document.getElementById('fontColor');
+    const fontSize = document.getElementById('fontSize');
+    const speed = document.getElementById('speed');
+    const mirror = document.getElementById('mirror');
+    const startBtn = document.getElementById('startBtn');
+    const display = document.getElementById('display');
+    const text = document.getElementById('text');
+
+    let animationId;
+
+    startBtn.addEventListener('click', () => {
+        cancelAnimationFrame(animationId);
+        text.style.transition = 'none';
+        text.style.transform = 'translateX(100%)';
+
+        text.innerText = inputText.value;
+        display.style.backgroundColor = bgColor.value;
+        display.style.color = fontColor.value;
+        display.style.fontSize = fontSize.value + 'px';
+
+        if (mirror.checked) {
+            display.classList.add('mirror');
+        } else {
+            display.classList.remove('mirror');
+        }
+
+        const totalWidth = text.offsetWidth + display.offsetWidth;
+        const duration = totalWidth / speed.value * 1000;
+
+        setTimeout(() => {
+            text.style.transition = 'transform ' + duration + 'ms linear';
+            text.style.transform = 'translateX(-' + text.offsetWidth + 'px)';
+        }, 50);
+    });
+</script>
+
+</body>
+</html>

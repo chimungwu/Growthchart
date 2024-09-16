@@ -172,7 +172,7 @@
         // 初始化滾動參數
         isPaused = false;
         currentSpeed = parseInt(speed.value);
-        startPosition = 0; // 讓第一行文字從可視畫面的底部開始滾動
+        startPosition = window.innerHeight; // 使用 window.innerHeight 確保在手機上正確計算可視高度
         text.style.transform = `translateY(${startPosition}px)`;
         startTime = null;
         pausedTime = 0;

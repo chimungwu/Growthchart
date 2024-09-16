@@ -39,11 +39,12 @@
             text-align: center;
         }
         #display.mirror {
-            transform: scaleX(-1); /* 僅鏡像文字 */
+            transform: scaleX(-1); /* 僅鏡像文字，不改變排列順序 */
         }
         #text {
             white-space: pre-wrap;
             line-height: 1.5;
+            direction: ltr; /* 保持從左到右的閱讀方向 */
         }
         #referenceLine {
             position: absolute;
@@ -58,9 +59,8 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
+            display: none; /* 隱藏字體調整按鈕，全螢幕保持簡潔 */
             gap: 20px;
-            z-index: 1000;
         }
         #controlButtons button {
             padding: 10px 20px;
@@ -111,12 +111,8 @@
     <div id="referenceLine"></div>
 </div>
 
-<div id="controlButtons" style="display: none;">
+<div id="controlButtons">
     <button id="pauseBtn">暫停</button>
-    <button id="increaseFontSizeBtn">字體變大</button>
-    <button id="decreaseFontSizeBtn">字體變小</button>
-    <button id="speedUpBtn">加速</button>
-    <button id="speedDownBtn">減速</button>
     <button id="exitBtn">退出全屏</button>
 </div>
 
@@ -135,17 +131,12 @@
     const text = document.getElementById('text');
     const referenceLine = document.getElementById('referenceLine');
     const pauseBtn = document.getElementById('pauseBtn');
-    const increaseFontSizeBtn = document.getElementById('increaseFontSizeBtn');
-    const decreaseFontSizeBtn = document.getElementById('decreaseFontSizeBtn');
-    const speedUpBtn = document.getElementById('speedUpBtn');
-    const speedDownBtn = document.getElementById('speedDownBtn');
     const exitBtn = document.getElementById('exitBtn');
     const controlButtons = document.getElementById('controlButtons');
 
     let animationFrame;
     let isPaused = false;
     let currentSpeed;
-    let currentFontSize;
     let startTime;
     let pausedTime = 0;
     let startPosition;
@@ -153,8 +144,7 @@
     startBtn.addEventListener('click', () => {
         // 設置文本樣式和內容
         text.style.fontFamily = fontFamily.value;
-        currentFontSize = parseInt(fontSize.value);
-        text.style.fontSize = currentFontSize + 'px';
+        text.style.fontSize = fontSize.value + 'px';
         text.style.color = fontColor.value;
         text.innerText = inputText.value;
         display.style.backgroundColor = bgColor.value;
@@ -214,26 +204,6 @@
     pauseBtn.addEventListener('click', () => {
         isPaused = !isPaused;
         pauseBtn.textContent = isPaused ? '繼續' : '暫停';
-    });
-
-    increaseFontSizeBtn.addEventListener('click', () => {
-        currentFontSize += 5;
-        text.style.fontSize = currentFontSize + 'px';
-    });
-
-    decreaseFontSize
-
-Btn.addEventListener('click', () => {
-        currentFontSize = Math.max(10, currentFontSize - 5);
-        text.style.fontSize = currentFontSize + 'px';
-    });
-
-    speedUpBtn.addEventListener('click', () => {
-        currentSpeed += 10;
-    });
-
-    speedDownBtn.addEventListener('click', () => {
-        currentSpeed = Math.max(10, currentSpeed - 10);
     });
 
     exitBtn.addEventListener('click', () => {

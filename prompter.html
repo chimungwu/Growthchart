@@ -160,6 +160,8 @@ let elapsed = 0;
 let pausedTime = 0;
 let pauseStart = 0;
 let startPosition;
+let initialStartPosition; // 新增
+let totalPausedTime = 0; // 總暫停時間
 
 startBtn.addEventListener('click', () => {
     // 設置文本樣式和內容
@@ -196,6 +198,7 @@ startBtn.addEventListener('click', () => {
     currentSpeed = parseInt(speed.value);
     elapsed = 0;
     pausedTime = 0;
+    totalPausedTime = 0;
     pauseStart = 0;
 
     setTimeout(() => {
@@ -203,9 +206,10 @@ startBtn.addEventListener('click', () => {
         const referenceLinePosition = displayHeight * 0.5; // 參考線位置
 
         startPosition = referenceLinePosition; // 從參考線位置開始
+        initialStartPosition = startPosition; // 保存初始位置
 
         text.style.transform = `translateY(${startPosition}px)`;
-        startTime = null;
+        startTime = performance.now();
 
         // 開始滾動
         requestAnimationFrame(scrollText);
@@ -213,14 +217,12 @@ startBtn.addEventListener('click', () => {
 });
 
 function scrollText(timestamp) {
-    if (!startTime) startTime = timestamp;
     if (isPaused || isDragging) {
-        // 在暫停或拖動時不更新 elapsed
         animationFrame = requestAnimationFrame(scrollText);
         return;
     }
     // 計算已經過的時間（扣除暫停的時間）
-    elapsed = timestamp - startTime - pausedTime;
+    elapsed = timestamp - startTime - totalPausedTime;
     const distance = elapsed * currentSpeed / 1000;
     const translateY = startPosition - distance;
     text.style.transform = `translateY(${translateY}px)`;
@@ -243,8 +245,9 @@ pauseBtn.addEventListener('click', () => {
         // 繼續滾動
         isPaused = false;
         pauseBtn.textContent = '暫停';
-        pausedTime += performance.now() - pauseStart;
-        // 更新 startTime，防止滾動速度突變
+        pausedTime = performance.now() - pauseStart;
+        totalPausedTime += pausedTime; // 累計總暫停時間
+        // 更新 startTime
         startTime = performance.now() - elapsed - pausedTime;
     }
 });
@@ -266,8 +269,9 @@ display.addEventListener('click', () => {
         // 繼續滾動
         isPaused = false;
         pauseBtn.textContent = '暫停';
-        pausedTime += performance.now() - pauseStart;
-        // 更新 startTime，防止滾動速度突變
+        pausedTime = performance.now() - pauseStart;
+        totalPausedTime += pausedTime; // 累計總暫停時間
+        // 更新 startTime
         startTime = performance.now() - elapsed - pausedTime;
     }
 });
@@ -307,8 +311,14 @@ function onDragEnd(event) {
     const style = window.getComputedStyle(text);
     const matrix = new DOMMatrixReadOnly(style.transform);
     startPosition = matrix.m42;
-    // 更新 startTime，防止滾動速度突變
-    startTime = performance.now() - elapsed - pausedTime;
+
+    // 計算新的 elapsed
+    const distanceMoved = initialStartPosition - startPosition;
+    elapsed = distanceMoved / currentSpeed * 1000;
+
+    // 更新 startTime
+    startTime = performance.now() - elapsed - totalPausedTime;
+
     // 恢復文字選取
     document.body.style.userSelect = 'auto';
 }
@@ -354,6 +364,7 @@ document.addEventListener('fullscreenchange', () => {
         cancelAnimationFrame(animationFrame);
     }
 });
+
 
 </script>
 

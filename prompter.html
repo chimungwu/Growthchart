@@ -35,8 +35,9 @@
             font-size: 50px;
             display: none;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end; /* 將文字定位於螢幕底部 */
             text-align: center;
+            height: 100vh; /* 保持全屏可視範圍 */
         }
         #display.mirror {
             transform: scaleX(-1); /* 僅鏡像文字，不改變排列順序 */
@@ -48,7 +49,7 @@
         }
         #referenceLine {
             position: absolute;
-            top: 50%; /* 固定在螢幕中央 */
+            top: 50%; /* 固定在可視區域的中間 */
             left: 0;
             width: 100%;
             border-top: 2px solid red;
@@ -171,7 +172,7 @@
         // 初始化滾動參數
         isPaused = false;
         currentSpeed = parseInt(speed.value);
-        startPosition = display.offsetHeight;
+        startPosition = 0; // 文字從螢幕底部開始
         text.style.transform = `translateY(${startPosition}px)`;
         startTime = null;
         pausedTime = 0;
@@ -192,7 +193,7 @@
         const distance = elapsed * currentSpeed / 1000;
         const translateY = startPosition - distance;
         text.style.transform = `translateY(${translateY}px)`;
-        if (translateY + text.offsetHeight > 0) {
+        if (translateY + text.offsetHeight > -display.offsetHeight) {
             animationFrame = requestAnimationFrame(scrollText);
         } else {
             // 滾動結束，退出全屏

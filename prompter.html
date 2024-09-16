@@ -43,10 +43,18 @@
     text-align: center;
 }
 
-/* 刪除對 #display 的鏡像效果 */
-/* #display.mirror {
+/* 對父容器應用鏡像效果 */
+#display.mirror {
     transform: scaleX(-1);
-} */
+}
+/* 文字容器 */
+#textContainer {
+    display: inline-block;
+}
+/* 對文字本身再次應用鏡像效果 */
+#textContainer.mirror {
+    transform: scaleX(-1);
+}
 
 #text {
     white-space: pre-wrap;
@@ -121,7 +129,9 @@
 </div>
 
 <div id="display">
-    <div id="text"></div>
+    <div id="textContainer">
+        <div id="text"></div>
+    </div>
     <div id="referenceLine"></div>
 </div>
 
@@ -163,12 +173,15 @@ startBtn.addEventListener('click', () => {
     text.innerText = inputText.value;
     display.style.backgroundColor = bgColor.value;
 
-    // 設置鏡像效果
-    if (mirror.checked) {
-        text.classList.add('mirror');
-    } else {
-        text.classList.remove('mirror');
-    }
+// 設置鏡像效果
+if (mirror.checked) {
+    display.classList.add('mirror');
+    document.getElementById('textContainer').classList.add('mirror');
+} else {
+    display.classList.remove('mirror');
+    document.getElementById('textContainer').classList.remove('mirror');
+}
+
 
     // 設置參考線樣式
     referenceLine.style.borderTopColor = refLineColor.value;

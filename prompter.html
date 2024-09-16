@@ -2,81 +2,118 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>手機題詞器</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手機提詞器</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             font-family: Arial, sans-serif;
+            background-color: #f8f9fa; /* 淡灰色背景，更加舒適 */
         }
+
         #controls {
-            padding: 10px;
-            background-color: #f0f0f0;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 添加輕微陰影 */
+            margin: 0 auto;
+            max-width: 600px; /* 設置最大寬度 */
+            border-radius: 10px; /* 圓角設計 */
+            text-align: center; /* 置中對齊 */
         }
+
         #controls label {
             display: block;
-            margin-top: 10px;
+            margin: 15px 0 5px;
+            font-weight: bold;
+            font-size: 16px; /* 調整字體大小，易於閱讀 */
+            color: #333;
         }
-        #controls input, #controls select, #controls button, #controls textarea {
+
+        #controls input, #controls select {
+            width: 80%; /* 縮小圖標和輸入框寬度 */
+            padding: 10px;
+            margin: 5px 0 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #controls input[type="number"], #controls input[type="color"] {
+            width: 50%;
+            display: inline-block; /* 調整大小並放置同一行 */
+        }
+
+        #controls input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        /* 美化開始滾動按鈕 */
+        #startBtn {
+            background-color: #007bff; /* 藍色背景 */
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px; /* 顯眼的字體大小 */
+            border-radius: 30px; /* 圓角按鈕 */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%; /* 全寬按鈕 */
+        }
+
+        #startBtn:hover {
+            background-color: #0056b3; /* 深色背景效果 */
+        }
+
+        #display {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            margin-top: 5px;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            font-size: 50px;
+            display: none;
+            justify-content: flex-start;
+            align-items: flex-start;
+            text-align: center;
         }
-        #inputText {
-            height: 150px;
-            resize: vertical;
-        }
-#display {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #000;
-    color: #fff;
-    font-size: 50px;
-    display: none;
-    justify-content: flex-start; /* 從頂部開始排列 */
-    align-items: flex-start; /* 從頂部開始排列 */
-    text-align: center;
-}
-
-#display.mirror {
-    transform: scaleX(-1);
-}
-
-/* 文字容器 */
-#textContainer {
-    display: block;
-}
-
-#text {
-    white-space: pre-wrap;
-    line-height: 1.5;
-    direction: ltr; /* 保持從左到右的閱讀方向 */
-}
 
         #referenceLine {
             position: absolute;
-            top: 50%; /* 固定在可視區域的中間 */
+            top: 50%;
             left: 0;
             width: 100%;
             border-top: 2px solid red;
             pointer-events: none;
         }
+
         #controlButtons {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: none; /* 隱藏字體調整按鈕，全螢幕保持簡潔 */
+            display: none;
             gap: 20px;
         }
+
         #controlButtons button {
             padding: 10px 20px;
             font-size: 16px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #controlButtons button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -84,7 +121,7 @@
 
 <div id="controls">
     <label for="inputText">輸入文字：</label>
-    <textarea id="inputText">這是一個簡單的題詞器。</textarea>
+    <textarea id="inputText" style="height: 100px; width: 100%; border-radius: 5px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box;">這是一個簡單的題詞器。</textarea>
 
     <label for="fontFamily">選擇字體：</label>
     <select id="fontFamily">
@@ -106,8 +143,9 @@
     <label for="speed">滾動速度：</label>
     <input type="number" id="speed" value="50" min="10" max="200"> px/s
 
-    <label for="mirror">鏡像文字：</label>
-    <input type="checkbox" id="mirror">
+    <label for="mirror">
+        <input type="checkbox" id="mirror"> 鏡像文字
+    </label>
 
     <label for="refLineColor">參考線顏色：</label>
     <input type="color" id="refLineColor" value="#FF0000">

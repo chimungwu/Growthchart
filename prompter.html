@@ -131,29 +131,32 @@
 </div>
 
 <script>
-    const inputText = document.getElementById('inputText');
-    const fontFamily = document.getElementById('fontFamily');
-    const bgColor = document.getElementById('bgColor');
-    const fontColor = document.getElementById('fontColor');
-    const fontSize = document.getElementById('fontSize');
-    const speed = document.getElementById('speed');
-    const mirror = document.getElementById('mirror');
-    const refLineColor = document.getElementById('refLineColor');
-    const refLineWidth = document.getElementById('refLineWidth');
-    const startBtn = document.getElementById('startBtn');
-    const display = document.getElementById('display');
-    const text = document.getElementById('text');
-    const referenceLine = document.getElementById('referenceLine');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const exitBtn = document.getElementById('exitBtn');
-    const controlButtons = document.getElementById('controlButtons');
+const inputText = document.getElementById('inputText');
+const fontFamily = document.getElementById('fontFamily');
+const bgColor = document.getElementById('bgColor');
+const fontColor = document.getElementById('fontColor');
+const fontSize = document.getElementById('fontSize');
+const speed = document.getElementById('speed');
+const mirror = document.getElementById('mirror');
+const refLineColor = document.getElementById('refLineColor');
+const refLineWidth = document.getElementById('refLineWidth');
+const startBtn = document.getElementById('startBtn');
+const display = document.getElementById('display');
+const textContainer = document.getElementById('textContainer');
+const text = document.getElementById('text');
+const referenceLine = document.getElementById('referenceLine');
+const pauseBtn = document.getElementById('pauseBtn');
+const exitBtn = document.getElementById('exitBtn');
+const controlButtons = document.getElementById('controlButtons');
 
-    let animationFrame;
-    let isPaused = false;
-    let currentSpeed;
-    let startTime;
-    let pausedTime = 0;
-    let startPosition;
+let animationFrame;
+let isPaused = false;
+let currentSpeed;
+let startTime;
+let elapsed = 0;
+let pausedTime = 0;
+let pauseStart = 0;
+let startPosition;
 
 startBtn.addEventListener('click', () => {
     // 設置文本樣式和內容
@@ -163,15 +166,14 @@ startBtn.addEventListener('click', () => {
     text.innerText = inputText.value;
     display.style.backgroundColor = bgColor.value;
 
-// 設置鏡像效果
-if (mirror.checked) {
-    display.classList.add('mirror');
-    // document.getElementById('textContainer').classList.add('mirror');
-} else {
-    display.classList.remove('mirror');
-    // document.getElementById('textContainer').classList.remove('mirror');
-}
-
+    // 設置鏡像效果
+    if (mirror.checked) {
+        display.classList.add('mirror');
+        textContainer.classList.add('mirror');
+    } else {
+        display.classList.remove('mirror');
+        textContainer.classList.remove('mirror');
+    }
 
     // 設置參考線樣式
     referenceLine.style.borderTopColor = refLineColor.value;
@@ -188,34 +190,33 @@ if (mirror.checked) {
     // 初始化滾動參數
     isPaused = false;
     currentSpeed = parseInt(speed.value);
-    
-    // 使用 setTimeout 確保文字渲染完成
+    elapsed = 0;
+    pausedTime = 0;
+    pauseStart = 0;
+
     setTimeout(() => {
         const displayHeight = display.offsetHeight;
-        const textHeight = text.offsetHeight;
         const referenceLinePosition = displayHeight * 0.5; // 參考線位置
 
-        startPosition = referenceLinePosition; // 從參考線開始
+        startPosition = referenceLinePosition; // 從參考線位置開始
 
         text.style.transform = `translateY(${startPosition}px)`;
         startTime = null;
-        pausedTime = 0;
 
         // 開始滾動
         requestAnimationFrame(scrollText);
     }, 0);
 });
 
-
 function scrollText(timestamp) {
     if (!startTime) startTime = timestamp;
     if (isPaused) {
-        pausedTime += timestamp - startTime;
-        startTime = timestamp;
+        // 在暫停時不更新 elapsed
         animationFrame = requestAnimationFrame(scrollText);
         return;
     }
-    const elapsed = timestamp - startTime - pausedTime;
+    // 計算已經過的時間（扣除暫停的時間）
+    elapsed = timestamp - startTime - pausedTime;
     const distance = elapsed * currentSpeed / 1000;
     const translateY = startPosition - distance;
     text.style.transform = `translateY(${translateY}px)`;
@@ -227,63 +228,81 @@ function scrollText(timestamp) {
     }
 }
 
-
-    // 控制按鈕事件
-    pauseBtn.addEventListener('click', () => {
-        isPaused = !isPaused;
-        pauseBtn.textContent = isPaused ? '繼續' : '暫停';
-    });
-
-    exitBtn.addEventListener('click', () => {
-        cancelAnimationFrame(animationFrame);
-        exitFullScreen();
-    });
-
-    // 點擊屏幕暫停/繼續
-    display.addEventListener('click', () => {
-        isPaused = !isPaused;
-        pauseBtn.textContent = isPaused ? '繼續' : '暫停';
-    });
-
-    // 進入全螢幕模式
-    function enterFullScreen() {
-        const docElm = document.documentElement;
-        if (docElm.requestFullscreen) {
-            docElm.requestFullscreen();
-        } else if (docElm.mozRequestFullScreen) { /* Firefox */
-            docElm.mozRequestFullScreen();
-        } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-            docElm.webkitRequestFullscreen();
-        } else if (docElm.msRequestFullscreen) { /* IE/Edge */
-            docElm.msRequestFullscreen();
-        }
+// 控制按鈕事件
+pauseBtn.addEventListener('click', () => {
+    if (!isPaused) {
+        // 暫停滾動
+        isPaused = true;
+        pauseBtn.textContent = '繼續';
+        pauseStart = performance.now();
+    } else {
+        // 繼續滾動
+        isPaused = false;
+        pauseBtn.textContent = '暫停';
+        pausedTime += performance.now() - pauseStart;
     }
+});
 
-    // 退出全螢幕模式
-    function exitFullScreen() {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { /* Firefox */
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE/Edge */
-            document.msExitFullscreen();
-        }
+exitBtn.addEventListener('click', () => {
+    cancelAnimationFrame(animationFrame);
+    exitFullScreen();
+});
+
+// 點擊屏幕暫停/繼續
+display.addEventListener('click', () => {
+    if (!isPaused) {
+        // 暫停滾動
+        isPaused = true;
+        pauseBtn.textContent = '繼續';
+        pauseStart = performance.now();
+    } else {
+        // 繼續滾動
+        isPaused = false;
+        pauseBtn.textContent = '暫停';
+        pausedTime += performance.now() - pauseStart;
+    }
+});
+
+// 進入全螢幕模式
+function enterFullScreen() {
+    const docElm = document.documentElement;
+    if (docElm.requestFullscreen) {
+        docElm.requestFullscreen();
+    } else if (docElm.mozRequestFullScreen) { /* Firefox */
+        docElm.mozRequestFullScreen();
+    } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        docElm.webkitRequestFullscreen();
+    } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+        docElm.msRequestFullscreen();
+    }
+}
+
+// 退出全螢幕模式
+function exitFullScreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) { /* Firefox */
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE/Edge */
+        document.msExitFullscreen();
+    }
+    display.style.display = 'none';
+    controlButtons.style.display = 'none';
+    document.getElementById('controls').style.display = 'block';
+}
+
+// 防止控制按鈕在全螢幕模式下自動隱藏
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
         display.style.display = 'none';
         controlButtons.style.display = 'none';
         document.getElementById('controls').style.display = 'block';
+        cancelAnimationFrame(animationFrame);
     }
+});
 
-    // 防止控制按鈕在全螢幕模式下自動隱藏
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-            display.style.display = 'none';
-            controlButtons.style.display = 'none';
-            document.getElementById('controls').style.display = 'block';
-            cancelAnimationFrame(animationFrame);
-        }
-    });
 </script>
 
 </body>

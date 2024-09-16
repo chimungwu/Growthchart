@@ -43,9 +43,10 @@
     text-align: center;
 }
 
-/* 對父容器應用鏡像效果 */
 #display.mirror {
     transform: scaleX(-1);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 /* 文字容器 */
@@ -56,6 +57,8 @@
 /* 對文字容器再次應用鏡像效果 */
 #textContainer.mirror {
     transform: scaleX(-1);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 #text {

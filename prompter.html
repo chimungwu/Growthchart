@@ -47,11 +47,13 @@
 #display.mirror {
     transform: scaleX(-1);
 }
+
 /* 文字容器 */
 #textContainer {
     display: inline-block;
 }
-/* 對文字本身再次應用鏡像效果 */
+
+/* 對文字容器再次應用鏡像效果 */
 #textContainer.mirror {
     transform: scaleX(-1);
 }
@@ -62,12 +64,6 @@
     direction: ltr; /* 保持從左到右的閱讀方向 */
 }
 
-#text.mirror {
-    transform: scaleX(-1);
-    display: inline-block;
-    direction: rtl;
-    unicode-bidi: bidi-override;
-}
         #referenceLine {
             position: absolute;
             top: 50%; /* 固定在可視區域的中間 */

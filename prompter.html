@@ -47,10 +47,6 @@
     transform: rotateY(180deg);
 }
 
-#textContainer.mirror {
-    transform: rotateY(180deg);
-}
-
 /* 文字容器 */
 #textContainer {
     display: block;
@@ -170,10 +166,10 @@ startBtn.addEventListener('click', () => {
 // 設置鏡像效果
 if (mirror.checked) {
     display.classList.add('mirror');
-    document.getElementById('textContainer').classList.add('mirror');
+    // document.getElementById('textContainer').classList.add('mirror');
 } else {
     display.classList.remove('mirror');
-    document.getElementById('textContainer').classList.remove('mirror');
+    // document.getElementById('textContainer').classList.remove('mirror');
 }
 
 
